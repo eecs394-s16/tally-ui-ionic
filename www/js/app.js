@@ -80,7 +80,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   })
   ;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/search');
 });
 
  window.pAsyncInit = function() {

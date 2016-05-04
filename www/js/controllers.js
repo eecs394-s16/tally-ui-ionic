@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http) {
+.controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http, ItemService) {
 
   $scope.importData = {}
 
@@ -64,9 +64,13 @@ angular.module('starter.controllers', [])
   $scope.doImport = function() {
     console.log('Doing Import', $scope.importData);
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-      console.log(response.data.data);
-      $scope.items = response.data.data;
-    });
+        console.log(response.data.data);
+        $scope.items = response.data.data;
+        for(i=0;i< $scope.items.length;i++){
+          ItemService.addItem($scope.items[i]);
+        }
+      } 
+    );
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
     $timeout(function() {
@@ -91,8 +95,10 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ItemCtrl', function($scope, $stateParams, ItemService) {
+  console.log($stateParams.itemId);
   $scope.itemId = $stateParams.itemId;
   $scope.itemDetails = ItemService.getItem($scope.itemId);
+  console.log($scope.itemDetails);
 })
 
 .service('ItemService', function() {
@@ -118,39 +124,25 @@ angular.module('starter.controllers', [])
    // link (if pin links to external site)
    // note (description I think)
    // url (url to pin)
-   items: [
-     {
-       id: "1",
-       message: "Chat Message 1"
-     },
-     {
-       id: "2",
-       message: "Chat Message 2"
-     },
-     {
-       id: "3",
-       message: "Chat Message 3"
-     },
-     {
-       id: "4",
-       message: "Chat Message 4"
-     },
-     {
-       id: "5",
-       message: "Chat Message 5"
-     }
-   ],
+   items: {},
    getItems: function() {
-     return this.items;
+    // console.log(this.items);
+         return this.items;
    },
    getItem: function(itemId) {
-     for(i=0;i<this.items.length;i++){
-       if(this.items[i].id == itemId){
-         // window.alert(this.items[i]);
-         return this.items[i];
-       }
-     }
-
+     // for(i=0;i<this.items.length;i++){
+     //   if(this.items[i].id == itemId){
+     //     // window.alert(this.items[i]);
+     //     return this.items[i];
+     //   }
+     // }
+     return this.items[itemId];
+   },
+   addItem: function(item) {
+    // this.items.push(item);
+    this.items[item.id] = item;
+    console.log("adding");
+    console.log(this.items[item.id]);
    }
  }
 })

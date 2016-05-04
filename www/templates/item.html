@@ -1,29 +1,13 @@
-<!-- <ion-view view-title="Item Name">
-  <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
-        {{playlist.title}}
-      </ion-item>
-    </ion-list>
-    <h1> {{ item.id }} </h1>
-     <div class="list">
-        <a ng-repeat="item in items" 
-           class="item item-thumbnail-left">
-
-          <img ng-src="{{ item.image.original.url }}">
-          <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
-          <h4>{{ item.created_at }}</h4>
-        </a>
-
-      </div>
-  </ion-content>
-</ion-view> -->
-
 <ion-view view-title="Chat Details">
 
   <ion-content>
-    <ion-item>Hello: {{ itemDetails.id }} </ion-item>
-    <ion-item>You: {{ itemDetails.message }} </ion-item>
+    <img ng-src="{{itemDetails.image.original.url}}" class="item-details-thumbnail">
+    <ion-item >Item ID: {{ itemDetails.id }} </ion-item>
+    <ion-item>Description: {{ itemDetails.note }} </ion-item>
+
+<!--     <ion-list>
+      <ion-item ng-repeat='(key, value) in allItems'>{{key}} hi {{value.id}}</ion-item>
+    </ion-list> -->
   </ion-content>
 
 </ion-view>
