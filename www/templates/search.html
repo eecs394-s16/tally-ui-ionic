@@ -1,5 +1,20 @@
 <ion-view view-title="Collection1">
+	
   <ion-content>
-    <h1>Collection1</h1>
+    <div class="list">
+
+        <a ng-repeat="item in items" 
+           class="item item-thumbnail-left">
+
+          <img ng-src="{{ item.image.original.url }}">
+          <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
+          <h4>{{ item.created_at }}</h4>
+        </a>
+
+      </div>
+    <button class="button button-full button-balanced" ng-click="import()">
+  		import a board
+	</button>
+
   </ion-content>
 </ion-view>
