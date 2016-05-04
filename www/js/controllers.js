@@ -54,7 +54,7 @@ angular.module('starter.controllers', ['starter.services'])
   // ];
 })
 
-.controller('CollectionsCtrl', function($scope, $http, $stateParams, $ionicPopup, Collection) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, Collection) {
 
   $scope.collections = [];
 
@@ -75,7 +75,7 @@ angular.module('starter.controllers', ['starter.services'])
 
     $scope.data={};
     var addPopup = $ionicPopup.show({
-      template: '<input type="text" ng-model="data.addUser"><br><input type="text" ng-model="data.addBoard">',
+      templateUrl: 'templates/addCollection.html',
       title: 'Add Collection From Pinterest',
       subTitle: 'Input User and Board Name',
       scope: $scope,
@@ -106,14 +106,10 @@ angular.module('starter.controllers', ['starter.services'])
       console.log('Tapped!', res);
     });
   };
-  // $scope.addCollectionFromPinterest = function(url) {
-
-  //   $http.get(url + "?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-  //     console.log(response.data.data);
-  //     $scope.collections.push(response.data.data);
-  //     console.log("Added Collection: " + response.data.data.name);
-  //   });
-  // };
+  
+  $scope.viewCollection = function(id) {
+    $state.go('app.collection');
+  }
 
 });
 
