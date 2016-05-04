@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['starter.services'])
+angular.module('starter.controllers', [])
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
@@ -39,7 +39,22 @@ angular.module('starter.controllers', ['starter.services'])
   };
 })
 
-.controller('CollectionCtrl', function($scope, $http) {
+// .controller('CollectionCtrl', function($scope, $http) {
+//   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
+//     console.log(response.data.data);
+//     $scope.items = response.data.data;
+//   });
+//   // $scope.playlists = [
+//   //   { title: 'Reggae', id: 1 },
+//   //   { title: 'Chill', id: 2 },
+//   //   { title: 'Dubstep', id: 3 },
+//   //   { title: 'Indie', id: 4 },
+//   //   { title: 'Rap', id: 5 },
+//   //   { title: 'Cowbell', id: 6 }
+//   // ];
+// })
+
+.controller('PlaylistCtrl', function($scope, $http) {
   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
     console.log(response.data.data);
     $scope.items = response.data.data;
@@ -54,7 +69,7 @@ angular.module('starter.controllers', ['starter.services'])
   // ];
 })
 
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, Collection) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup) {
 
   $scope.collections = [];
 
@@ -108,7 +123,7 @@ angular.module('starter.controllers', ['starter.services'])
   };
   
   $scope.viewCollection = function(id) {
-    $state.go('app.collection');
+    $state.go('app.playlist');
   }
 
 });
