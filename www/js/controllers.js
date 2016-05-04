@@ -44,6 +44,13 @@ angular.module('starter.controllers', [])
   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
     console.log(response.data.data);
     $scope.items = response.data.data;
+    console.log($scope.items[1]);
+    //$scope.items[0].id
+    //               .created_at
+    //               .creator
+    //               .note
+    // pin           .url
+    // hyperlink     .link
   });
   // $scope.playlists = [
   //   { title: 'Reggae', id: 1 },
@@ -65,6 +72,27 @@ angular.module('starter.controllers', [])
 
 .service('ItemService', function() {
  return {
+   // Object fields 
+   // attribution (unclear what this is)
+   // board (object with internal fields)
+   //    id
+   //    name
+   //    url
+   // created_at
+   // creator 
+   //    first_name
+   //    id
+   //    last_name:
+   //    url
+   // id
+   // image
+   //    original
+   //       height
+   //       url
+   //       width
+   // link (if pin links to external site)
+   // note (description I think)
+   // url (url to pin)
    items: [
      {
        id: "1",
