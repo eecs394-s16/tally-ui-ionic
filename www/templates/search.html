@@ -5,7 +5,8 @@
 
         <a ng-repeat="item in items" 
            class="item item-thumbnail-left"
-           href="#/app/playlists/{{item.id}}">
+           href="#/app/playlists/{{item.id}}"
+           class="item item-thumbnail-top">
 
           <img ng-src="{{ item.image.original.url }}">
           <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
