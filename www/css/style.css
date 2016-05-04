@@ -1,1 +1,11 @@
 /* Empty. Add your own CSS if you like */
+.item-thumbnail-top{
+	width:50%;
+	float:left;
+	
+}
+
+.item-thumbnail-top img{
+	width: 100%;
+	height: 150px;
+}
