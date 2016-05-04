@@ -1,0 +1,21 @@
+<ion-view view-title="Collections">
+  <ion-content>
+    <h1>Collections</h1>
+    <br>
+    <button class="button" ng-click="addCollectionFromPinterest()">
+    	+
+    </button>
+
+    <div class="list">
+    	<a ng-repeat="collection in collections" class="item item-thumbnail-top">
+    		<img ng-src="{{ collection.image['60x60'].url }}">
+    		<h2>{{ collection.name }}</h2>
+    		<h4>
+    			{{ collection.url }}
+    			<br>
+    			<small>
+    				&nbsp;{{ collection.id }}
+    			</small>
+    		</h4>
+  </ion-content>
+</ion-view>

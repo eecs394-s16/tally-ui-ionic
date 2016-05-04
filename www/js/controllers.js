@@ -1,5 +1,4 @@
-angular.module('starter.controllers', [])
-
+angular.module('starter.controllers', ['starter.services'])
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
@@ -40,7 +39,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http) {
+.controller('CollectionCtrl', function($scope, $http) {
   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
     console.log(response.data.data);
     $scope.items = response.data.data;
@@ -55,6 +54,66 @@ angular.module('starter.controllers', [])
   // ];
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('CollectionsCtrl', function($scope, $http, $stateParams, $ionicPopup, Collection) {
+
+  $scope.collections = [];
+
+  $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    console.log(response.data.data.creator);
+
+    $scope.collections.push(response.data.data);
+  });
+
+  $http.get("https://api.pinterest.com/v1/boards/amyilyse/chic/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    console.log(response.data.data.image);
+
+    $scope.collections.push(response.data.data);
+    
+  });
+
+  $scope.addCollectionFromPinterest = function(){
+
+    $scope.data={};
+    var addPopup = $ionicPopup.show({
+      template: '<input type="text" ng-model="data.addUser"><br><input type="text" ng-model="data.addBoard">',
+      title: 'Add Collection From Pinterest',
+      subTitle: 'Input User and Board Name',
+      scope: $scope,
+
+      buttons: [
+      { text: 'Cancel' }, {
+        text: '<b>Add</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.data.addUser || !$scope.data.addBoard) {
+            console.log("No Add Info");
+            //don't allow the user to close unless he enters model...
+            e.preventDefault();
+          } else {
+
+            $http.get("https://api.pinterest.com/v1/boards/" + $scope.data.addUser + "/" + $scope.data.addBoard + "/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+              console.log(response.data.data);
+              $scope.collections.push(response.data.data);
+              console.log("Added Collection: " + response.data.data.name);
+            });
+            
+          }
+        }
+      }]
+    });
+
+    addPopup.then(function(res) {
+      console.log('Tapped!', res);
+    });
+  };
+  // $scope.addCollectionFromPinterest = function(url) {
+
+  //   $http.get(url + "?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+  //     console.log(response.data.data);
+  //     $scope.collections.push(response.data.data);
+  //     console.log("Added Collection: " + response.data.data.name);
+  //   });
+  // };
+
 });
 
