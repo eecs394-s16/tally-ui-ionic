@@ -56,5 +56,50 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
-});
+})
+
+.controller('ItemCtrl', function($scope, $stateParams, ItemService) {
+  $scope.itemId = $stateParams.itemId;
+  $scope.itemDetails = ItemService.getItem($scope.itemId);
+})
+
+.service('ItemService', function() {
+ return {
+   items: [
+     {
+       id: "1",
+       message: "Chat Message 1"
+     },
+     {
+       id: "2",
+       message: "Chat Message 2"
+     },
+     {
+       id: "3",
+       message: "Chat Message 3"
+     },
+     {
+       id: "4",
+       message: "Chat Message 4"
+     },
+     {
+       id: "5",
+       message: "Chat Message 5"
+     }
+   ],
+   getItems: function() {
+     return this.items;
+   },
+   getItem: function(itemId) {
+     for(i=0;i<this.items.length;i++){
+       if(this.items[i].id == itemId){
+         // window.alert(this.items[i]);
+         return this.items[i];
+       }
+     }
+
+   }
+ }
+})
+;
 

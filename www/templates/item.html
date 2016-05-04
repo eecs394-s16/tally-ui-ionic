@@ -1,15 +1,14 @@
-<ion-view view-title="Collection3">
+<!-- <ion-view view-title="Item Name">
   <ion-content>
-    <!-- <ion-list>
+    <ion-list>
       <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
         {{playlist.title}}
       </ion-item>
-    </ion-list> -->
+    </ion-list>
+    <h1> {{ item.id }} </h1>
      <div class="list">
-
         <a ng-repeat="item in items" 
-           class="item item-thumbnail-left"
-           href="#/app/playlists/2">
+           class="item item-thumbnail-left">
 
           <img ng-src="{{ item.image.original.url }}">
           <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
@@ -18,4 +17,13 @@
 
       </div>
   </ion-content>
+</ion-view> -->
+
+<ion-view view-title="Chat Details">
+
+  <ion-content>
+    <ion-item>Hello: {{ itemDetails.id }} </ion-item>
+    <ion-item>You: {{ itemDetails.message }} </ion-item>
+  </ion-content>
+
 </ion-view>
