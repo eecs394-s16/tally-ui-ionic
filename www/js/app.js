@@ -50,7 +50,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.playlists', {
+    // .state('app.collection', {
+    //   url: '/collection',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/collection.html',
+    //       controller: 'CollectionCtrl'
+    //     }
+    //   }
+    // })
+  .state('app.playlists', {
       url: '/playlists',
       views: {
         'menuContent': {
@@ -59,6 +68,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
+
+  .state('app.collections', {
+    url: '/collections',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/collections.html',
+        controller: 'CollectionsCtrl'
+      }
+    }
+  })
 
   // .state('app.single', {
   //   url: '/playlists/:playlistId',
@@ -81,6 +100,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   ;
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/search');
+
 });
 
  window.pAsyncInit = function() {

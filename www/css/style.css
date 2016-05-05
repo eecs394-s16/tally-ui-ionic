@@ -1,13 +1,26 @@
 /* Empty. Add your own CSS if you like */
 .item-thumbnail-top{
 	width:50%;
-	float:left;
-	
+	float:left;	
 }
 
 .item-thumbnail-top img{
 	width: 100%;
 	height: 150px;
+
+}
+
+.item-thumbnail-col{
+	width:50%;
+	float:left;	
+}
+
+.item-thumbnail-col img{
+	width: 60px;
+	height: 60px;
+	margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 .item-details-thumbnail {
