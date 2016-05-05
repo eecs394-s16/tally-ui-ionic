@@ -1,14 +1,13 @@
 <ion-view view-title="Collection1">
 	
-  <ion-content>
-
-      <ion-header-bar class="bar-positive">
+    
+      <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
         <div class="buttons">
           <button class="button button-icon icon ion-ios-minus-outline"
-            ng-click="data.showDelete = !data.showDelete; data.showReorder = false
+            ng-click="data.showDelete = !data.showDelete; data.showReorder = false;
                       shouldShowDelete = !shouldShowDelete; shouldShowReorder = false;"></button>
         </div>
-        <h1 class="title">Ionic Delete/Option Buttons</h1>
+        <h1 class="title">My Collection</h1>
         <div class="buttons">
           <button class="button" ng-click="data.showDelete = false; data.showReorder = !data.showReorder;
                                           shouldShowDelete = false; shouldShowReorder = !shouldShowReorder;">
@@ -17,7 +16,8 @@
         </div>
       </ion-header-bar>
 
-      <ion-list
+      <ion-content class="has-header has-subheader">
+      <ion-list 
                 show-delete="shouldShowDelete"
                 show-reorder="shouldShowReorder"
                 can-swipe="listCanSwipe">
@@ -43,9 +43,9 @@
       </ion-list>
 
 
-    <button class="button button-full button-balanced" ng-click="import()">
-  		import a board
-	</button>
+    <button class="button button-full button-positive" ng-click="import()">
+    		import a board
+  	</button>
 
-  </ion-content>
+    </ion-content>
 </ion-view>
