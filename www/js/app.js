@@ -36,7 +36,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     url: '/search',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/search.html',
+        controller: 'PlaylistsCtrl'
       }
     }
   })
@@ -58,12 +59,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     //     }
     //   }
     // })
-  .state('app.playlist', {
-      url: '/playlist',
+  .state('app.playlists', {
+      url: '/playlists',
       views: {
         'menuContent': {
-          templateUrl: 'templates/playlist.html',
-          controller: 'PlaylistCtrl'
+          templateUrl: 'templates/playlists.html',
+          controller: 'PlaylistsCtrl'
         }
       }
     })
@@ -76,9 +77,30 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         controller: 'CollectionsCtrl'
       }
     }
-  });
+  })
+
+  // .state('app.single', {
+  //   url: '/playlists/:playlistId',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/playlist.html',
+  //       controller: 'PlaylistCtrl'
+  //     }
+  //   }
+  // })
+  .state('app.item', {
+    url: '/playlists/:itemId',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/item.html',
+        controller: 'ItemCtrl'
+      }
+    }
+  })
+  ;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlist');
+  $urlRouterProvider.otherwise('/app/search');
+
 });
 
  window.pAsyncInit = function() {
