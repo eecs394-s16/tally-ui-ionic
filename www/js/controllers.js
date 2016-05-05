@@ -214,6 +214,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
+
   $scope.itemId = $stateParams.itemId;
   $scope.itemDetails = ItemService.getItem($scope.itemId);
   $ionicModal.fromTemplateUrl('templates/edit-item.html', {
@@ -222,7 +223,10 @@ angular.module('starter.controllers', [])
     $scope.editModal = modal;
   });
 
+  $scope.updatedItem = {};
+
   $scope.hideEdit = function() {
+    console.log($scope.updatedItem);
     $scope.editModal.hide();
   };
 
@@ -230,7 +234,10 @@ angular.module('starter.controllers', [])
     $scope.editModal.show();
   };
   $scope.editItem = function() {
-
+    angular.extend($scope.itemDetails,$scope.updatedItem);
+    ItemService.addItem($scope.itemDetails);
+    $scope.editModal.hide();
+    
   }
 })
 

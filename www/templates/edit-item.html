@@ -9,11 +9,19 @@
     <form ng-submit="editItem()">
       <div class="list">
         <label class="item item-input">
-          <input type="text" placeholder="Item Name" ng-model="importData.username">
+          <input type="text" placeholder="Name" ng-model="updatedItem.name">
         </label>
         <label class="item item-input">
-          <!-- <span class="input-label">Description</span> -->
-          <input type="text" placeholder="Board Name" ng-model="importData.boardname">
+          <input type="text" placeholder="Price" ng-model="updatedItem.price">
+        </label>
+        <label class="item item-input">
+          <input type="text" placeholder="Description" ng-model="updatedItem.note">
+        </label>
+        <label class="item item-input">
+          <input type="text" placeholder="Image URL" ng-model="updatedItem.image.original.url">
+        </label>
+        <label class="item item-input">
+          <input type="text" placeholder="Group" ng-model="updatedItem.group">
         </label>
         <label class="item">
           <button class="button button-block button-positive" type="submit">Submit</button>
