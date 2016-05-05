@@ -1,0 +1,24 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Edit Item</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="hideEdit()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="editItem()">
+      <div class="list">
+        <label class="item item-input">
+          <input type="text" placeholder="Item Name" ng-model="importData.username">
+        </label>
+        <label class="item item-input">
+          <!-- <span class="input-label">Description</span> -->
+          <input type="text" placeholder="Board Name" ng-model="importData.boardname">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Submit</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>

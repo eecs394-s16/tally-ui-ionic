@@ -1,4 +1,9 @@
-<ion-view view-title="Chat Details">
+<ion-view view-title="Item Details">
+  <ion-nav-buttons side="secondary">
+      <button class="button" ng-click="showEdit()">
+        Edit
+      </button>
+    </ion-nav-buttons>
 
   <ion-content>
     <img ng-src="{{itemDetails.image.original.url}}" class="item-details-thumbnail">

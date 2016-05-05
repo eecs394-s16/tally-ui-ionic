@@ -94,11 +94,25 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
-.controller('ItemCtrl', function($scope, $stateParams, ItemService) {
-  console.log($stateParams.itemId);
+.controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
   $scope.itemId = $stateParams.itemId;
   $scope.itemDetails = ItemService.getItem($scope.itemId);
-  console.log($scope.itemDetails);
+  $ionicModal.fromTemplateUrl('templates/edit-item.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.editModal = modal;
+  });
+
+  $scope.hideEdit = function() {
+    $scope.editModal.hide();
+  };
+
+  $scope.showEdit = function() {
+    $scope.editModal.show();
+  };
+  $scope.editItem = function() {
+
+  }
 })
 
 .service('ItemService', function() {
