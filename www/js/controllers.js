@@ -241,11 +241,32 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ItemCtrl', function($scope, $stateParams, ItemService) {
-  console.log($stateParams.itemId);
+.controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
+
   $scope.itemId = $stateParams.itemId;
   $scope.itemDetails = ItemService.getItem($scope.itemId);
-  console.log($scope.itemDetails);
+  $ionicModal.fromTemplateUrl('templates/edit-item.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.editModal = modal;
+  });
+
+  $scope.updatedItem = {};
+
+  $scope.hideEdit = function() {
+    console.log($scope.updatedItem);
+    $scope.editModal.hide();
+  };
+
+  $scope.showEdit = function() {
+    $scope.editModal.show();
+  };
+  $scope.editItem = function() {
+    angular.extend($scope.itemDetails,$scope.updatedItem);
+    ItemService.addItem($scope.itemDetails);
+    $scope.editModal.hide();
+    
+  }
 })
 
 .service('ItemService', function() {
