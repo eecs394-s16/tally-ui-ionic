@@ -119,6 +119,7 @@ angular.module('starter.controllers', [])
 
   // Open the login modal
   $scope.import = function() {
+    console.log("import successful");
     $scope.importModal.show();
   };
 
@@ -151,6 +152,29 @@ angular.module('starter.controllers', [])
   //   { title: 'Rap', id: 5 },
   //   { title: 'Cowbell', id: 6 }
   // ];
+    $scope.shouldShowDelete = false;
+    $scope.shouldShowReorder = false;
+    $scope.listCanSwipe = true;
+
+    $scope.data = {
+      showDelete: false,
+      showReorder: false
+    };
+    
+    $scope.edit = function(item) {
+      alert('Edit Item: ' + item.id);
+    };
+
+    $scope.share = function(item) {
+      alert('Share Item: ' + item.id);
+    };
+    
+    $scope.reorderItem = function(item, fromIndex, toIndex) {
+      console.log(item,fromIndex,toIndex);
+      console.log($scope.items);
+      $scope.items.splice(fromIndex, 1);
+      $scope.items.splice(toIndex, 0, item);
+    };
 })
 
 

@@ -1,19 +1,48 @@
 <ion-view view-title="Collection1">
 	
   <ion-content>
-    <div class="list">
 
-        <a ng-repeat="item in items" 
-           class="item item-thumbnail-left"
-           href="#/app/playlists/{{item.id}}"
-           class="item item-thumbnail-top">
+      <ion-header-bar class="bar-positive">
+        <div class="buttons">
+          <button class="button button-icon icon ion-ios-minus-outline"
+            ng-click="data.showDelete = !data.showDelete; data.showReorder = false
+                      shouldShowDelete = !shouldShowDelete; shouldShowReorder = false;"></button>
+        </div>
+        <h1 class="title">Ionic Delete/Option Buttons</h1>
+        <div class="buttons">
+          <button class="button" ng-click="data.showDelete = false; data.showReorder = !data.showReorder;
+                                          shouldShowDelete = false; shouldShowReorder = !shouldShowReorder;">
+              Reorder
+          </button>
+        </div>
+      </ion-header-bar>
+
+      <ion-list
+                show-delete="shouldShowDelete"
+                show-reorder="shouldShowReorder"
+                can-swipe="listCanSwipe">
+        <ion-item ng-repeat="item in items"
+                  class="item-thumbnail-left"
+                  href="#/app/playlists/{{item.id}}"
+                  class="item item-thumbnail-top">
 
           <img ng-src="{{ item.image.original.url }}">
           <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
           <h4>{{ item.created_at }}</h4>
-        </a>
+          <ion-option-button class="button-positive" ng-click="share(item)">
+            Share
+          </ion-option-button>
+          <ion-option-button class="button-info" ng-click="edit(item)">
+            Edit
+          </ion-option-button>
+          <ion-delete-button class="ion-minus-circled" ng-click="items.splice($index, 1)">
+          </ion-delete-button>
+          <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(item, $fromIndex, $toIndex)">
+          </ion-reorder-button>
+        </ion-item>
+      </ion-list>
 
-      </div>
+
     <button class="button button-full button-balanced" ng-click="import()">
   		import a board
 	</button>
