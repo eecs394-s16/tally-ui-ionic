@@ -36,7 +36,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     url: '/search',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/search.html',
+        controller: 'PlaylistsCtrl'
       }
     }
   })
@@ -49,7 +50,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.playlists', {
+    // .state('app.collection', {
+    //   url: '/collection',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/collection.html',
+    //       controller: 'CollectionCtrl'
+    //     }
+    //   }
+    // })
+  .state('app.playlists', {
       url: '/playlists',
       views: {
         'menuContent': {
@@ -59,15 +69,51 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.collections', {
+    url: '/collections',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/collections.html',
+        controller: 'CollectionsCtrl'
       }
     }
-  });
+  })
+
+  // .state('app.single', {
+  //   url: '/playlists/:playlistId',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/playlist.html',
+  //       controller: 'PlaylistCtrl'
+  //     }
+  //   }
+  // })
+  .state('app.item', {
+    url: '/playlists/:itemId',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/item.html',
+        controller: 'ItemCtrl'
+      }
+    }
+  })
+  ;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/search');
+
 });
+
+ window.pAsyncInit = function() {
+        PDK.init({
+            appId: "4832506208411730233", // Change this
+            cookie: true
+        });
+    };
+
+    (function(d, s, id){
+        var js, pjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//assets.pinterest.com/sdk/sdk.js";
+        pjs.parentNode.insertBefore(js, pjs);
+    }(document, 'script', 'pinterest-jssdk'));

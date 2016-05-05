@@ -105,6 +105,11 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http, ItemService) {
 
+  $scope.shouldShowDelete = false;
+  $scope.shouldShowReorder = false;
+  $scope.listCanSwipe = true;
+  $scope.showHeaderBar = false;
+
   $scope.importData = {}
 
   $ionicModal.fromTemplateUrl('templates/import.html', {
@@ -124,9 +129,10 @@ angular.module('starter.controllers', [])
 
   // Perform the login action when the user submits the login form
   $scope.doImport = function() {
-    console.log('Doing Import', $scope.importData);
+    //console.log('Doing Import', $scope.importData);
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        console.log(response.data.data);
+        //console.log(response.data.data);
+        console.log($scope.importData.boardname);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
           ItemService.addItem($scope.items[i]);
@@ -137,6 +143,7 @@ angular.module('starter.controllers', [])
     // code if using a login system
     $timeout(function() {
       $scope.closeImport();
+      $scope.showHeaderBar = true;
     }, 1000);
   };
 
@@ -151,6 +158,27 @@ angular.module('starter.controllers', [])
   //   { title: 'Rap', id: 5 },
   //   { title: 'Cowbell', id: 6 }
   // ];
+
+
+    $scope.data = {
+      showDelete: false,
+      showReorder: false
+    };
+    
+    $scope.edit = function(item) {
+      alert('Edit Item: ' + item.id);
+    };
+
+    $scope.share = function(item) {
+      alert('Share Item: ' + item.id);
+    };
+    
+    $scope.reorderItem = function(item, fromIndex, toIndex) {
+      console.log(item,fromIndex,toIndex);
+      console.log($scope.items);
+      $scope.items.splice(fromIndex, 1);
+      $scope.items.splice(toIndex, 0, item);
+    };
 })
 
 
