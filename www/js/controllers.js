@@ -265,7 +265,7 @@ angular.module('starter.controllers', [])
     angular.extend($scope.itemDetails,$scope.updatedItem);
     ItemService.addItem($scope.itemDetails);
     $scope.editModal.hide();
-    
+    $scope.updatedItem = {};
   }
 })
 
