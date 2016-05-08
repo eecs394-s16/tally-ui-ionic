@@ -43,7 +43,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // })
 
   .state('app.collection', {
-    url: '/collection/:collectionName',
+    url: '/collection/:collectionId',
     views: {
       'menuContent': {
         templateUrl: 'templates/collection.html',
@@ -99,7 +99,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   //   }
   // })
   .state('app.item', {
-    url: '/collection/:collectionName/:itemId',
+    url: '/collection/:collectionId/:itemId',
     views: {
       'menuContent': {
         templateUrl: 'templates/item.html',

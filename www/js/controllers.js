@@ -111,12 +111,12 @@ angular.module('starter.controllers', [])
   $scope.shouldShowReorder = false;
   $scope.listCanSwipe = true;
   $scope.showHeaderBar = true;
-  $scope.collectionName = $stateParams.collectionName;
-  $scope.items = ItemService.getItems($stateParams.collectionName);
+  $scope.collectionId = $stateParams.collectionId;
+  $scope.items = ItemService.getItems($stateParams.collectionId);
   console.log($scope.items);
   $scope.importData = {}
   $scope.reload = function() {
-    $scope.items = ItemService.getItems($stateParams.collectionName);
+    $scope.items = ItemService.getItems($stateParams.collectionId);
     console.log($scope.items);
   }
   $ionicModal.fromTemplateUrl('templates/import.html', {
@@ -141,7 +141,7 @@ angular.module('starter.controllers', [])
         CollectionService.addCollection(response.data.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($stateParams.collectionName, $scope.items[i]);
+          ItemService.addItem($stateParams.collectionId, $scope.items[i]);
         }
       } 
     );
@@ -244,20 +244,7 @@ angular.module('starter.controllers', [])
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
     });
-  };
-
-
-  // $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-  //   CollectionService.addCollection("interiors", response.data.data);
-
-  //   // console.log(CollectionService.getCollections());
-  // });
-
-  // $http.get("https://api.pinterest.com/v1/boards/amyilyse/chic/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-  //   CollectionService.addCollection("chic", response.data.data);
-  //   // console.log(CollectionService.getCollections());
-  // });
-  
+  };  
 
   //TODO: shouldn't need this anymore
   $scope.addCollectionFromPinterest = function(){
@@ -307,7 +294,7 @@ angular.module('starter.controllers', [])
 .controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
 
   $scope.itemId = $stateParams.itemId;
-  $scope.itemDetails = ItemService.getItem($stateParams.collectionName, $scope.itemId);
+  $scope.itemDetails = ItemService.getItem($stateParams.collectionId, $scope.itemId);
   console.log($scope.itemDetails);
   $ionicModal.fromTemplateUrl('templates/edit-item.html', {
     scope: $scope
@@ -326,13 +313,15 @@ angular.module('starter.controllers', [])
   };
   $scope.editItem = function() {
     angular.extend($scope.itemDetails,$scope.updatedItem);
-    ItemService.addItem($stateParams.collectionName, $scope.itemDetails);
+    ItemService.addItem($stateParams.collectionId, $scope.itemDetails);
     $scope.editModal.hide();
     
   }
 })
 
 /*
+  items is a map with keys collectionId
+  each value of items[collectionId] is a map with keys itemId and values of items
   Each item has the following fields:
     attribution: not sure
     board:
@@ -371,26 +360,27 @@ angular.module('starter.controllers', [])
 .service('ItemService', function() {
  return {
    items: {},
-   getItems: function(collectionName) {
-    return this.items[collectionName];
+   getItems: function(collectionId) {
+    return this.items[collectionId];
    },
-   getItem: function(collectionName, itemId) {
-     return this.items[collectionName][itemId];
+   getItem: function(collectionId, itemId) {
+     return this.items[collectionId][itemId];
    },
-   addItem: function(collectionName, item) {
-    if(!this.items.hasOwnProperty(collectionName)){
-      this.items[collectionName] = {};
+   addItem: function(collectionId, item) {
+    if(!this.items.hasOwnProperty(collectionId)){
+      this.items[collectionId] = {};
     }
-    if(!this.items[collectionName].hasOwnProperty(item.id)){
-      this.items[collectionName][item.id] = {};
+    if(!this.items[collectionId].hasOwnProperty(item.id)){
+      this.items[collectionId][item.id] = {};
     }
-    angular.extend(this.items[collectionName][item.id], item);
+    angular.extend(this.items[collectionId][item.id], item);
    }
  }
 })
 
 
 /*
+  collections is a map of collectionId to collection objects
   Each collection is stored with the following fields:
     creator:
       first_name: String
