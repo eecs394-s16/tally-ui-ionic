@@ -1,11 +1,19 @@
 <ion-view view-title="Collections">
+	<ion-nav-buttons side="secondary">
+	  <button class="button" ng-click="login()">
+	    Login
+	  </button>
+	  <button class="button" ng-click="import()">
+			Add
+		</button>
+	</ion-nav-buttons>
   <ion-content>
   <div class="row">
-  	<div class="col col-25 col-offset-75">
+  	<!---<div class="col col-25 col-offset-75">
 		<button class="button button-calm icon-left ion-plus-round" ng-click="addCollectionFromPinterest()">
 			Add
 		</button>
-	</div>
+	</div> -->
 	</div>
 	<div class="row">
   	<div class="col text-center">
@@ -22,10 +30,11 @@
 
 	<div class="row">
     <div class="col list">
-    	<a ng-repeat="collection in collections" class="item item-thumbnail-col">
-    		<h4>{{ collection.name }}</h4>
-    		<img class="center" ng-src="{{ collection.image['60x60'].url }}">
-    		<button class="button button-small button-full button-outline button-stable" ng-click="viewCollection(collection.id)">
+    	<a ng-repeat="(key, value) in collections" class="item item-thumbnail-col"  href="#/app/collection/{{value.name}}">
+    		<h4>{{ value.name }}</h4>
+    		<img class="center" ng-src="{{ value.image['60x60'].url }}">
+    		<!-- <button class="button button-small button-full button-outline button-stable" ng-click="viewCollection(value.name)"> -->
+    		<button class="button button-small button-full button-outline button-stable">
     			View
     		</button>
     	</a>

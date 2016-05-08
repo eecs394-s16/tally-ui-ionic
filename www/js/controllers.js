@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [])
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, UserService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -30,6 +30,8 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
+    UserService.addUsername($scope.loginData.username);
+    console.log(UserService.getUsername());
 
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
@@ -45,7 +47,7 @@ angular.module('starter.controllers', [])
 //     console.log(response.data.data);
 //     $scope.items = response.data.data;
 //   });
-//   // $scope.playlists = [
+//   // $scope.playlists =CollectionCtrl [
 //   //   { title: 'Reggae', id: 1 },
 //   //   { title: 'Chill', id: 2 },
 //   //   { title: 'Dubstep', id: 3 },
@@ -103,12 +105,14 @@ angular.module('starter.controllers', [])
 // })
 
 
-.controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http, ItemService) {
+.controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, ItemService, CollectionService) {
 
   $scope.shouldShowDelete = false;
   $scope.shouldShowReorder = false;
   $scope.listCanSwipe = true;
   $scope.showHeaderBar = false;
+  $scope.collectionName = $stateParams.collectionName;
+  $scope.items = ItemService.getItems($stateParams.collectionName);
 
   $scope.importData = {}
 
@@ -130,13 +134,17 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doImport = function() {
     //console.log('Doing Import', $scope.importData);
+    //TODO: Implement http get to get all subsequent items, only gets 25 
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        //console.log(response.data.data);
+        
+        console.log(response.data.data);
+        CollectionService.addCollection($scope.importData.boardname, response.data.data);
         console.log($scope.importData.boardname);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.items[i]);
+          ItemService.addItem($scope.importData.boardName, $scope.items[i]);
         }
+        // console.log($scope.items == CollectionService.getCollection($scope.importData.boardname));
       } 
     );
     // Simulate a login delay. Remove this and replace with your login
@@ -148,17 +156,6 @@ angular.module('starter.controllers', [])
   };
 
   // console.log($scope.importData)
-
-  
-  // $scope.playlists = [
-  //   { title: 'Reggae', id: 1 },
-  //   { title: 'Chill', id: 2 },
-  //   { title: 'Dubstep', id: 3 },
-  //   { title: 'Indie', id: 4 },
-  //   { title: 'Rap', id: 5 },
-  //   { title: 'Cowbell', id: 6 }
-  // ];
-
 
     $scope.data = {
       showDelete: false,
@@ -182,22 +179,97 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, UserService, CollectionService, ItemService) {
+  $scope.loginData = {};
+  $scope.collections = CollectionService.getCollections();
+  $scope.importData = {};
+  $scope.importResult = {};
 
-  $scope.collections = [];
-
-  $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-    console.log(response.data.data.creator);
-
-    $scope.collections.push(response.data.data);
+  // Create the login modal that we will use later
+  $ionicModal.fromTemplateUrl('templates/login.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
   });
 
-  $http.get("https://api.pinterest.com/v1/boards/amyilyse/chic/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-    console.log(response.data.data.image);
+  // Triggered in the login modal to close it
+  $scope.closeLogin = function() {
+    $scope.modal.hide();
+  };
 
-    $scope.collections.push(response.data.data);
-    
+  // Open the login modal
+  $scope.login = function() {
+    $scope.modal.show();
+  };
+
+  // Perform the login action when the user submits the login form
+  $scope.doLogin = function() {
+    console.log('Doing login', $scope.loginData);
+    UserService.addUsername($scope.loginData);
+    console.log(UserService.getUser());
+  };
+
+
+  $ionicModal.fromTemplateUrl('templates/import.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.importModal = modal;
   });
+
+  $scope.closeImport = function() {
+    $scope.importModal.hide();
+  };
+
+  // Open the login modal
+  $scope.import = function() {
+    $scope.importModal.show();
+  };
+
+  // Perform the login action when the user submits the login form
+  $scope.doImport = function() {
+    //console.log('Doing Import', $scope.importData);
+    //TODO: Implement http get to get all subsequent items, only gets 25 
+    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+        
+        console.log(response.data.data);
+        // CollectionService.addCollection($scope.importData.boardname, response.data.data);
+        console.log($scope.importData.boardname);
+        angular.extend($scope.importResult, response.data);
+        console.log($scope.importResult);
+        $scope.items = response.data.data;
+        for(i=0;i< $scope.items.length;i++){
+          ItemService.addItem($scope.importData.boardname, $scope.items[i]);
+        }
+
+        $scope.closeImport();
+        $scope.showHeaderBar = true;
+        // console.log($scope.items == CollectionService.getCollection($scope.importData.boardname));
+      } 
+    ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+      // console.log($scope.importResult);
+      angular.extend($scope.importResult, response.data.data);
+      // console.log(response.data.data);
+      // console.log($scope.importResult);
+    })
+    ).then(function() {
+      console.log($scope.importResult);
+      CollectionService.addCollection($scope.importResult.name, $scope.importResult);
+      $scope.collections = CollectionService.getCollections();
+      $scope.importResult = {};
+    });
+  };
+
+
+  // $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+  //   CollectionService.addCollection("interiors", response.data.data);
+
+  //   // console.log(CollectionService.getCollections());
+  // });
+
+  // $http.get("https://api.pinterest.com/v1/boards/amyilyse/chic/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+  //   CollectionService.addCollection("chic", response.data.data);
+  //   // console.log(CollectionService.getCollections());
+  // });
 
   $scope.addCollectionFromPinterest = function(){
 
@@ -236,7 +308,7 @@ angular.module('starter.controllers', [])
   };
   
   $scope.viewCollection = function(id) {
-    $state.go('app.search');
+    $state.go('app.collection/'+id);
   }
 
 })
@@ -244,7 +316,9 @@ angular.module('starter.controllers', [])
 .controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
 
   $scope.itemId = $stateParams.itemId;
-  $scope.itemDetails = ItemService.getItem($scope.itemId);
+  console.log($scope.itemId);
+  $scope.itemDetails = ItemService.getItem($stateParams.collectionName, $scope.itemId);
+  console.log($scope.itemDetails);
   $ionicModal.fromTemplateUrl('templates/edit-item.html', {
     scope: $scope
   }).then(function(modal) {
@@ -263,55 +337,124 @@ angular.module('starter.controllers', [])
   };
   $scope.editItem = function() {
     angular.extend($scope.itemDetails,$scope.updatedItem);
-    ItemService.addItem($scope.itemDetails);
+    ItemService.addItem($stateParams.collectionName, $scope.itemDetails);
     $scope.editModal.hide();
     
   }
 })
 
+/*
+  Each item has the following fields:
+    attribution: not sure
+    board:
+      id: string (id of board)
+      name: string 
+      url: string
+    color: string (color hex)
+    counts:
+      comments: number
+      likes: number
+      repins: number
+    created_at: string (date)
+    id: string (unique pin id)
+    image:
+      original:
+        height: number 
+        url: string
+        width: number
+    link: string
+    media:
+      type: string
+    // not sure what the metadata is, could be external link
+    metadata:
+      link:
+        description: string
+        favicon: string (link to image?)
+        locale: string (ie "en")
+        site_name: string (link to main site)
+        title: string
+    note: string (actual description on pin)
+    original_link: string (external link to other sites ie tumblr)
+    url: string (url to pinterest)
+
+*/
+
 .service('ItemService', function() {
  return {
-   // Object fields 
-   // attribution (unclear what this is)
-   // board (object with internal fields)
-   //    id
-   //    name
-   //    url
-   // created_at
-   // creator 
-   //    first_name
-   //    id
-   //    last_name:
-   //    url
-   // id
-   // image
-   //    original
-   //       height
-   //       url
-   //       width
-   // link (if pin links to external site)
-   // note (description I think)
-   // url (url to pin)
    items: {},
-   getItems: function() {
-         return this.items;
+   getItems: function(collectionName) {
+    return this.items[collectionName];
    },
-   getItem: function(itemId) {
-     // for(i=0;i<this.items.length;i++){
-     //   if(this.items[i].id == itemId){
-     //     // window.alert(this.items[i]);
-     //     return this.items[i];
-     //   }
-     // }
-     return this.items[itemId];
+   getItem: function(collectionName, itemId) {
+     return this.items[collectionName][itemId];
    },
-   addItem: function(item) {
+   addItem: function(collectionName, item) {
     // this.items.push(item);
-    this.items[item.id] = item;
-    console.log("adding");
-    console.log(this.items[item.id]);
+    console.log(this.items);
+    console.log(this.items.collectionName);
+    console.log(this.items.hasOwnProperty(collectionName));
+    if(!this.items.hasOwnProperty(collectionName)){
+      this.items.collectionName = {};
+    }
+    console.log(this.items.hasOwnProperty(collectionName));
+    angular.extend(this.items[collectionName][item.id], item);
+    // this.items[collectionName][item.id] = item;
+    // console.log("adding");
+    // console.log(this.items[item.id]);
    }
  }
-});
+})
+
+
+/*
+  Each collection is stored with the following fields:
+    creator:
+      first_name: String
+      id: String (of numbers I think()
+      last_name: String
+      url: String to user's page
+    data: Array of items, see Item Service
+    id: String (I think this is the id of the user the token is connected to)
+    image:
+      60x60:
+        height: number
+        url: string
+        width: number
+    name: string (name of board)
+    page: 
+      cursor: string
+      next: url (call for next 25 objects in collection)
+    url: string (url to board)
+*/
+.service('CollectionService', function() {
+ return {
+   collections: {},
+   getCollections: function() {
+         return this.collections;
+   },
+   getCollection: function(collectionId) {
+     return this.collections[collectionId];
+   },
+   addCollection: function(collectionId, collection) {
+    // this.items.push(item);
+    this.collections[collectionId] = collection;
+    // console.log("adding");
+    // console.log(this.collections[collectionId]);
+    console.log(this.collections);
+   }
+ }
+})
+.service('UserService', function() {
+ return {
+   user: {},
+   getUser: function() {
+      return this.user;
+   },
+   addUsername: function(user) {
+      this.user = user;
+   }
+ }
+})
+;
 
 
