@@ -110,12 +110,15 @@ angular.module('starter.controllers', [])
   $scope.shouldShowDelete = false;
   $scope.shouldShowReorder = false;
   $scope.listCanSwipe = true;
-  $scope.showHeaderBar = false;
+  $scope.showHeaderBar = true;
   $scope.collectionName = $stateParams.collectionName;
   $scope.items = ItemService.getItems($stateParams.collectionName);
-
+  console.log($scope.items);
   $scope.importData = {}
-
+  $scope.reload = function() {
+    $scope.items = ItemService.getItems($stateParams.collectionName);
+    console.log($scope.items);
+  }
   $ionicModal.fromTemplateUrl('templates/import.html', {
     scope: $scope
   }).then(function(modal) {
@@ -126,31 +129,27 @@ angular.module('starter.controllers', [])
     $scope.importModal.hide();
   };
 
-  // Open the login modal
+  // Open the import modal
   $scope.import = function() {
     $scope.importModal.show();
   };
 
-  // Perform the login action when the user submits the login form
+  // Perform the import action when the user submits the import form
   $scope.doImport = function() {
-    //console.log('Doing Import', $scope.importData);
     //TODO: Implement http get to get all subsequent items, only gets 25 
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        
-        console.log(response.data.data);
-        CollectionService.addCollection($scope.importData.boardname, response.data.data);
-        console.log($scope.importData.boardname);
+        CollectionService.addCollection(response.data.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.importData.boardName, $scope.items[i]);
+          ItemService.addItem($stateParams.collectionName, $scope.items[i]);
         }
-        // console.log($scope.items == CollectionService.getCollection($scope.importData.boardname));
       } 
     );
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
     $timeout(function() {
       $scope.closeImport();
+      $scope.importData = {};
       $scope.showHeaderBar = true;
     }, 1000);
   };
@@ -230,30 +229,18 @@ angular.module('starter.controllers', [])
     //console.log('Doing Import', $scope.importData);
     //TODO: Implement http get to get all subsequent items, only gets 25 
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        
-        console.log(response.data.data);
-        // CollectionService.addCollection($scope.importData.boardname, response.data.data);
-        console.log($scope.importData.boardname);
         angular.extend($scope.importResult, response.data);
-        console.log($scope.importResult);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.importData.boardname, $scope.items[i]);
+          ItemService.addItem($scope.importResult.id, $scope.items[i]);
         }
-
         $scope.closeImport();
-        $scope.showHeaderBar = true;
-        // console.log($scope.items == CollectionService.getCollection($scope.importData.boardname));
       } 
     ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
-      // console.log($scope.importResult);
       angular.extend($scope.importResult, response.data.data);
-      // console.log(response.data.data);
-      // console.log($scope.importResult);
     })
     ).then(function() {
-      console.log($scope.importResult);
-      CollectionService.addCollection($scope.importResult.name, $scope.importResult);
+      CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
     });
@@ -270,7 +257,9 @@ angular.module('starter.controllers', [])
   //   CollectionService.addCollection("chic", response.data.data);
   //   // console.log(CollectionService.getCollections());
   // });
+  
 
+  //TODO: shouldn't need this anymore
   $scope.addCollectionFromPinterest = function(){
 
     $scope.data={};
@@ -306,7 +295,9 @@ angular.module('starter.controllers', [])
       console.log('Tapped!', res);
     });
   };
-  
+
+
+  //TODO: shouldn't need this anymore
   $scope.viewCollection = function(id) {
     $state.go('app.collection/'+id);
   }
@@ -316,7 +307,6 @@ angular.module('starter.controllers', [])
 .controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
 
   $scope.itemId = $stateParams.itemId;
-  console.log($scope.itemId);
   $scope.itemDetails = ItemService.getItem($stateParams.collectionName, $scope.itemId);
   console.log($scope.itemDetails);
   $ionicModal.fromTemplateUrl('templates/edit-item.html', {
@@ -328,7 +318,6 @@ angular.module('starter.controllers', [])
   $scope.updatedItem = {};
 
   $scope.hideEdit = function() {
-    console.log($scope.updatedItem);
     $scope.editModal.hide();
   };
 
@@ -389,18 +378,13 @@ angular.module('starter.controllers', [])
      return this.items[collectionName][itemId];
    },
    addItem: function(collectionName, item) {
-    // this.items.push(item);
-    console.log(this.items);
-    console.log(this.items.collectionName);
-    console.log(this.items.hasOwnProperty(collectionName));
     if(!this.items.hasOwnProperty(collectionName)){
-      this.items.collectionName = {};
+      this.items[collectionName] = {};
     }
-    console.log(this.items.hasOwnProperty(collectionName));
+    if(!this.items[collectionName].hasOwnProperty(item.id)){
+      this.items[collectionName][item.id] = {};
+    }
     angular.extend(this.items[collectionName][item.id], item);
-    // this.items[collectionName][item.id] = item;
-    // console.log("adding");
-    // console.log(this.items[item.id]);
    }
  }
 })
@@ -435,11 +419,8 @@ angular.module('starter.controllers', [])
    getCollection: function(collectionId) {
      return this.collections[collectionId];
    },
-   addCollection: function(collectionId, collection) {
-    // this.items.push(item);
-    this.collections[collectionId] = collection;
-    // console.log("adding");
-    // console.log(this.collections[collectionId]);
+   addCollection: function(collection) {
+    this.collections[collection.id] = collection;
     console.log(this.collections);
    }
  }
