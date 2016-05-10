@@ -1,0 +1,35 @@
+<ion-view view-title="Collections">
+  <ion-content>
+  <div class="row">
+  	<div class="col col-25 col-offset-75">
+		<button class="button button-calm icon-left ion-plus-round" ng-click="addCollectionFromPinterest()">
+			Add
+		</button>
+	</div>
+	</div>
+	<div class="row">
+  	<div class="col text-center">
+    	<h2>My Collections</h2>
+
+	</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<hr>
+		</div>
+	</div>
+
+	<div class="row">
+    <div class="col list">
+    	<a ng-repeat="collection in collections" class="item item-thumbnail-col">
+    		<h4>{{ collection.name }}</h4>
+    		<img class="center" ng-src="{{ collection.image['60x60'].url }}">
+    		<button class="button button-small button-full button-outline button-stable" ng-click="viewCollection(collection.id)">
+    			View
+    		</button>
+    	</a>
+    </div>
+	</div>
+  </ion-content>
+</ion-view>

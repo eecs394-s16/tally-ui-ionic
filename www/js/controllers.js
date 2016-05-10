@@ -1,6 +1,7 @@
 angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $http, $ionicModal, $timeout) {
+// .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -45,9 +46,75 @@ angular.module('starter.controllers', [])
 
 })
 
+// .controller('CollectionCtrl', function($scope, $http) {
+//   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
+//     console.log(response.data.data);
+//     $scope.items = response.data.data;
+//   });
+//   // $scope.playlists = [
+//   //   { title: 'Reggae', id: 1 },
+//   //   { title: 'Chill', id: 2 },
+//   //   { title: 'Dubstep', id: 3 },
+//   //   { title: 'Indie', id: 4 },
+//   //   { title: 'Rap', id: 5 },
+//   //   { title: 'Cowbell', id: 6 }
+//   // ];
+// })
+
+// .controller('PlaylistsCtrl', function($scope, $http) {
+//   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
+//     console.log(response.data.data);
+//     $scope.items = response.data.data;
+//   });
+
+//   $scope.closeImport = function() {
+//     $scope.importModal.hide();
+//   };
+
+//   // Open the login modal
+//   $scope.import = function() {
+//     $scope.importModal.show();
+//   };
+
+//   // Perform the login action when the user submits the login form
+//   $scope.doImport = function() {
+//     console.log('Doing Import', $scope.importData);
+//     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+//         console.log(response.data.data);
+//         $scope.items = response.data.data;
+//         for(i=0;i< $scope.items.length;i++){
+//           ItemService.addItem($scope.items[i]);
+//         }
+//       } 
+//     );
+
+//     // Simulate a login delay. Remove this and replace with your login
+//     // code if using a login system
+//     $timeout(function() {
+//       $scope.closeImport();
+//     }, 1000);
+//   };
+
+//   // console.log($scope.importData)
+
+  
+//   // $scope.playlists = [
+//   //   { title: 'Reggae', id: 1 },
+//   //   { title: 'Chill', id: 2 },
+//   //   { title: 'Dubstep', id: 3 },
+//   //   { title: 'Indie', id: 4 },
+//   //   { title: 'Rap', id: 5 },
+//   //   { title: 'Cowbell', id: 6 }
+//   // ];
+// })
 
 
-.controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http) {
+.controller('PlaylistsCtrl', function($scope, $ionicModal, $timeout, $http, ItemService) {
+
+  $scope.shouldShowDelete = false;
+  $scope.shouldShowReorder = false;
+  $scope.listCanSwipe = true;
+  $scope.showHeaderBar = false;
 
   $scope.importData = {}
 
@@ -68,15 +135,21 @@ angular.module('starter.controllers', [])
 
   // Perform the login action when the user submits the login form
   $scope.doImport = function() {
-    console.log('Doing Import', $scope.importData);
+    //console.log('Doing Import', $scope.importData);
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-      console.log(response.data.data);
-      $scope.items = response.data.data;
-    });
+        //console.log(response.data.data);
+        console.log($scope.importData.boardname);
+        $scope.items = response.data.data;
+        for(i=0;i< $scope.items.length;i++){
+          ItemService.addItem($scope.items[i]);
+        }
+      } 
+    );
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
     $timeout(function() {
       $scope.closeImport();
+      $scope.showHeaderBar = true;
     }, 1000);
   };
 
@@ -91,8 +164,160 @@ angular.module('starter.controllers', [])
   //   { title: 'Rap', id: 5 },
   //   { title: 'Cowbell', id: 6 }
   // ];
+
+
+    $scope.data = {
+      showDelete: false,
+      showReorder: false
+    };
+    
+    $scope.edit = function(item) {
+      alert('Edit Item: ' + item.id);
+    };
+
+    $scope.share = function(item) {
+      alert('Share Item: ' + item.id);
+    };
+    
+    $scope.reorderItem = function(item, fromIndex, toIndex) {
+      console.log(item,fromIndex,toIndex);
+      console.log($scope.items);
+      $scope.items.splice(fromIndex, 1);
+      $scope.items.splice(toIndex, 0, item);
+    };
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup) {
+
+  $scope.collections = [];
+
+  $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    console.log(response.data.data.creator);
+
+    $scope.collections.push(response.data.data);
+  });
+
+  $http.get("https://api.pinterest.com/v1/boards/amyilyse/chic/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    console.log(response.data.data.image);
+
+    $scope.collections.push(response.data.data);
+    
+  });
+
+  $scope.addCollectionFromPinterest = function(){
+
+    $scope.data={};
+    var addPopup = $ionicPopup.show({
+      templateUrl: 'templates/addCollection.html',
+      title: 'Add Collection From Pinterest',
+      subTitle: 'Input User and Board Name',
+      scope: $scope,
+
+      buttons: [
+      { text: 'Cancel' }, {
+        text: '<b>Add</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.data.addUser || !$scope.data.addBoard) {
+            console.log("No Add Info");
+            //don't allow the user to close unless he enters model...
+            e.preventDefault();
+          } else {
+
+            $http.get("https://api.pinterest.com/v1/boards/" + $scope.data.addUser + "/" + $scope.data.addBoard + "/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+              console.log(response.data.data);
+              $scope.collections.push(response.data.data);
+              console.log("Added Collection: " + response.data.data.name);
+            });
+            
+          }
+        }
+      }]
+    });
+
+    addPopup.then(function(res) {
+      console.log('Tapped!', res);
+    });
+  };
+  
+  $scope.viewCollection = function(id) {
+    $state.go('app.search');
+  }
+
+})
+
+.controller('ItemCtrl', function($scope, $stateParams, $ionicModal, ItemService) {
+
+  $scope.itemId = $stateParams.itemId;
+  $scope.itemDetails = ItemService.getItem($scope.itemId);
+  $ionicModal.fromTemplateUrl('templates/edit-item.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.editModal = modal;
+  });
+
+  $scope.updatedItem = {};
+
+  $scope.hideEdit = function() {
+    console.log($scope.updatedItem);
+    $scope.editModal.hide();
+  };
+
+  $scope.showEdit = function() {
+    $scope.editModal.show();
+  };
+  $scope.editItem = function() {
+    angular.extend($scope.itemDetails,$scope.updatedItem);
+    ItemService.addItem($scope.itemDetails);
+    $scope.editModal.hide();
+    
+  }
+})
+
+.service('ItemService', function() {
+ return {
+   // Object fields 
+   // attribution (unclear what this is)
+   // board (object with internal fields)
+   //    id
+   //    name
+   //    url
+   // created_at
+   // creator 
+   //    first_name
+   //    id
+   //    last_name:
+   //    url
+   // id
+   // image
+   //    original
+   //       height
+   //       url
+   //       width
+   // link (if pin links to external site)
+   // note (description I think)
+   // url (url to pin)
+   items: {},
+   getItems: function() {
+         return this.items;
+   },
+   getItem: function(itemId) {
+     // for(i=0;i<this.items.length;i++){
+     //   if(this.items[i].id == itemId){
+     //     // window.alert(this.items[i]);
+     //     return this.items[i];
+     //   }
+     // }
+     return this.items[itemId];
+   },
+   addItem: function(item) {
+    // this.items.push(item);
+    this.items[item.id] = item;
+    console.log("adding");
+    console.log(this.items[item.id]);
+   }
+ }
 });
+
 

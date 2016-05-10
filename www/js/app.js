@@ -50,7 +50,16 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.playlists', {
+    // .state('app.collection', {
+    //   url: '/collection',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/collection.html',
+    //       controller: 'CollectionCtrl'
+    //     }
+    //   }
+    // })
+  .state('app.playlists', {
       url: '/playlists',
       views: {
         'menuContent': {
@@ -60,15 +69,38 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
+  .state('app.collections', {
+    url: '/collections',
     views: {
       'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
+        templateUrl: 'templates/collections.html',
+        controller: 'CollectionsCtrl'
       }
     }
-  });
+  })
+
+  // .state('app.single', {
+  //   url: '/playlists/:playlistId',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/playlist.html',
+  //       controller: 'PlaylistCtrl'
+  //     }
+  //   }
+  // })
+  .state('app.item', {
+    url: '/playlists/:itemId',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/item.html',
+        controller: 'ItemCtrl'
+      }
+    }
+  })
+  ;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
+
+  // $urlRouterProvider.otherwise('/app/search');
+// ======
+  $urlRouterProvider.otherwise('/app/collections');
 });

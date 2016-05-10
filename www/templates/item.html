@@ -1,0 +1,18 @@
+<ion-view view-title="Item Details">
+  <ion-nav-buttons side="secondary">
+      <button class="button" ng-click="showEdit()">
+        Edit
+      </button>
+    </ion-nav-buttons>
+
+  <ion-content>
+    <img ng-src="{{itemDetails.image.original.url}}" class="item-details-thumbnail">
+    <ion-item >Item ID: {{ itemDetails.id }} </ion-item>
+    <ion-item>Description: {{ itemDetails.note }} </ion-item>
+
+<!--     <ion-list>
+      <ion-item ng-repeat='(key, value) in allItems'>{{key}} hi {{value.id}}</ion-item>
+    </ion-list> -->
+  </ion-content>
+
+</ion-view>
