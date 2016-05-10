@@ -1,5 +1,9 @@
 <ion-view view-title="Collection1">
-	
+	 <ion-nav-buttons side="secondary">
+      <button class="button" ng-click="reload()">
+        Reload
+      </button>
+    </ion-nav-buttons>
     
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
         <div class="buttons">
@@ -23,7 +27,7 @@
                 can-swipe="listCanSwipe">
         <ion-item ng-repeat="item in items"
                   class="item-thumbnail-left"
-                  href="#/app/playlists/{{item.id}}"
+                  href="#/app/collection/{{collectionId}}/{{item.id}}"
                   class="item item-thumbnail-top">
 
           <img ng-src="{{ item.image.original.url }}">
