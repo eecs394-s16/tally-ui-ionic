@@ -322,7 +322,7 @@ angular.module('starter.controllers', [])
     angular.extend($scope.itemDetails,$scope.updatedItem);
     ItemService.addItem($stateParams.collectionId, $scope.itemDetails);
     $scope.editModal.hide();
-    
+    $scope.updatedItem = {};
   }
 })
 
