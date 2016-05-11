@@ -247,6 +247,8 @@ angular.module('starter.controllers', [])
       angular.extend($scope.importResult, response.data.data);
     })
     ).then(function() {
+      console.log("NOAH $scope.importResult:");
+      console.log($scope.importResult);
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};

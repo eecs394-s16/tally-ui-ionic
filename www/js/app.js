@@ -114,5 +114,5 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
   // $urlRouterProvider.otherwise('/app/search');
 // ======
-  $urlRouterProvider.otherwise('/app/collections');
+  $urlRouterProvider.otherwise('/app/collection');
 });
