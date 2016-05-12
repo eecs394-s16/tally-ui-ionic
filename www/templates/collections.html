@@ -1,25 +1,29 @@
+<<<<<<< HEAD
 <ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>Collections<h3>'>
+=======
+<!-- <ion-view view-title="My Collections"> -->
+<ion-view>
+	<ion-nav-title>
+		<img class="tally-logo" src="img/tally-wordmark-gray.png" style="width:60px;height:32px;">
+	</ion-nav-title>
+>>>>>>> refs/remotes/origin/master
 	<ion-nav-buttons side="secondary">
 	  <button class="button" ng-click="login()">
 	    Login
 	  </button>
-	  <button class="button" ng-click="import()">
-			Add
-		</button>
 	</ion-nav-buttons>
   <ion-content>
-  <div class="row">
-  	<!---<div class="col col-25 col-offset-75">
+  <!--- <div class="row">
+  	<div class="col col-25 col-offset-75">
 		<button class="button button-calm icon-left ion-plus-round" ng-click="addCollectionFromPinterest()">
 			Add
 		</button>
+	</div>
 	</div> -->
-	</div>
 	<div class="row">
-  	<div class="col text-center">
-    	<h2>My Collections</h2>
-
-	</div>
+		<div class="col text-center">
+			<h2>My Collections</h2>
+		</div>
 	</div>
 
 	<div class="row">
@@ -30,13 +34,18 @@
 
 	<div class="row">
     <div class="col list">
+    	<a class="item item-thumbnail-create" ng-click="import()">
+    		<img class="center" ng-src="img/import-collection.png">
+    	</a>
     	<a ng-repeat="(key, value) in collections" class="item item-thumbnail-col"  href="#/app/collection/{{value.id}}">
+    		<div class="item item-thumbnail-col-inside">
     		<h4>{{ value.name }}</h4>
     		<img class="center" ng-src="{{ value.image['60x60'].url }}">
     		<!-- <button class="button button-small button-full button-outline button-stable" ng-click="viewCollection(value.name)"> -->
     		<button class="button button-small button-full button-outline button-stable">
     			View
     		</button>
+    	</div>
     	</a>
     </div>
 	</div>
