@@ -41,7 +41,7 @@
 	float:center;
 }
 
-<<<<<<< HEAD
+
 .header-logo{
 	width:25px;
 	height: 25px;
@@ -54,9 +54,6 @@
 	float: left;
 }
 
-
-
-=======
 .item-thumbnail-create{
 	border:none;
 	background-color: #FFFFFF;
@@ -74,7 +71,9 @@
 }
 
 .tally-logo {
-	margin-top: 0.5em;
+	margin-top: 0.4em;
 	vertical-align: center;
+	width:60px;
+	height:32px;
 }
->>>>>>> refs/remotes/origin/master
+
