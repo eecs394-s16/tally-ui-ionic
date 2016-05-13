@@ -22,29 +22,19 @@
       </ion-header-bar>
 
       <ion-content class="has-header has-subheader">
-      <ion-list 
-                show-delete="shouldShowDelete"
-                show-reorder="shouldShowReorder"
-                can-swipe="listCanSwipe">
+
         <ion-item ng-repeat="item in items"
-                  class="item-thumbnail-top"
                   href="#/app/collection/{{collectionId}}/{{item.id}}"
-                  class="item item-thumbnail-top">
+                  class="item-thumbnail-top draggable drag-drop">
 
           <img ng-src="{{ item.image.original.url }}">
           <h2>{{ item.note }}</h2>
-          <ion-option-button class="button-positive" ng-click="share(item)">
-            Share
-          </ion-option-button>
-          <ion-option-button class="button-info" ng-click="edit(item)">
-            Edit
-          </ion-option-button>
           <ion-delete-button class="ion-minus-circled" ng-click="items.splice($index, 1)">
           </ion-delete-button>
           <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(item, $fromIndex, $toIndex)">
           </ion-reorder-button>
         </ion-item>
-      </ion-list>
+
 
 
     <button class="button button-full button-positive" ng-click="import()">
