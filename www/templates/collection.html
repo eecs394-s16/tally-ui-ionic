@@ -26,23 +26,29 @@
                 show-reorder="shouldShowReorder"
                 can-swipe="listCanSwipe">
         <ion-item ng-repeat="item in items"
-                  class="item-thumbnail-left"
-                  href="#/app/collection/{{collectionId}}/{{item.id}}"
-                  class="item item-thumbnail-top">
+                  class="list card draggable"
+                  href="#/app/collection/{{collectionId}}/{{item.id}}">
+          <div class="item item-avatar" >
+            <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
+            <h4>{{ item.created_at }}</h4>
+          </div>
+          <div class="item item-image">
 
-          <img ng-src="{{ item.image.original.url }}">
-          <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
-          <h4>{{ item.created_at }}</h4>
-          <ion-option-button class="button-positive" ng-click="share(item)">
-            Share
-          </ion-option-button>
-          <ion-option-button class="button-info" ng-click="edit(item)">
-            Edit
-          </ion-option-button>
-          <ion-delete-button class="ion-minus-circled" ng-click="items.splice($index, 1)">
-          </ion-delete-button>
-          <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(item, $fromIndex, $toIndex)">
-          </ion-reorder-button>
+            <img ng-src="{{ item.image.original.url }}">
+          </div>
+
+            <ion-option-button class="button-positive" ng-click="share(item)">
+              Share
+            </ion-option-button>
+            <ion-option-button class="button-info" ng-click="edit(item)">
+              Edit
+            </ion-option-button>
+            <ion-delete-button class="ion-minus-circled" ng-click="items.splice($index, 1)">
+            </ion-delete-button>
+            <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(item, $fromIndex, $toIndex)">
+
+            </ion-reorder-button>
+          </div>
         </ion-item>
       </ion-list>
 
