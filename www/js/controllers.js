@@ -33,12 +33,14 @@ angular.module('starter.controllers', [])
   };
 
   // Perform the login action when the user submits the login form
-  $scope.doLogin = function(callback) {
+  $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-    UserService.addUsername($scope.loginData.username);
-    console.log(UserService.getUsername());
+    // UserService.addUsername($scope.loginData.username);
+    // console.log(UserService.getUsername());
 
-    PDK.login({scope : 'read_public, write_public'}, callback);
+    PDK.login({scope : 'read_public, write_public'}, function(res){
+      console.log(res.session.accessToken);
+    });
 
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
@@ -88,7 +90,7 @@ angular.module('starter.controllers', [])
 //         for(i=0;i< $scope.items.length;i++){
 //           ItemService.addItem($scope.items[i]);
 //         }
-//       } 
+//       }
 //     );
 
 //     // Simulate a login delay. Remove this and replace with your login
@@ -100,7 +102,7 @@ angular.module('starter.controllers', [])
 
 //   // console.log($scope.importData)
 
-  
+
 //   // $scope.playlists = [
 //   //   { title: 'Reggae', id: 1 },
 //   //   { title: 'Chill', id: 2 },
@@ -143,14 +145,14 @@ angular.module('starter.controllers', [])
 
   // Perform the import action when the user submits the import form
   $scope.doImport = function() {
-    //TODO: Implement http get to get all subsequent items, only gets 25 
+    //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
         CollectionService.addCollection(response.data.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
           ItemService.addItem($stateParams.collectionId, $scope.items[i]);
         }
-      } 
+      }
     );
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
@@ -167,7 +169,7 @@ angular.module('starter.controllers', [])
       showDelete: false,
       showReorder: false
     };
-    
+
     $scope.edit = function(item) {
       alert('Edit Item: ' + item.id);
     };
@@ -175,7 +177,7 @@ angular.module('starter.controllers', [])
     $scope.share = function(item) {
       alert('Share Item: ' + item.id);
     };
-    
+
     $scope.reorderItem = function(item, fromIndex, toIndex) {
       console.log(item,fromIndex,toIndex);
       console.log($scope.items);
@@ -185,7 +187,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, UserService, CollectionService, ItemService) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, UserService, CollectionService, ItemService) {
   $scope.loginData = {};
   $scope.collections = CollectionService.getCollections();
   $scope.importData = {};
@@ -197,6 +199,9 @@ angular.module('starter.controllers', [])
   }).then(function(modal) {
     $scope.modal = modal;
   });
+
+  // Initialize the Pinterest SDK
+  PDK.init({appId:'4833595787237665566', cookie: true});
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -211,8 +216,19 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-    UserService.addUsername($scope.loginData);
-    console.log(UserService.getUser());
+    // UserService.addUsername($scope.loginData);
+    // console.log(UserService.getUser());
+
+    //Pinterest SDK to get the user toekn
+    PDK.login({scope : 'read_public, write_public'}, function(res){
+      console.log(res.session.accessToken);
+      // new_user = 
+    });
+
+    $timeout(function() {
+      $scope.closeLogin();
+    }, 1000);
+
   };
 
 
@@ -234,7 +250,7 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doImport = function() {
     //console.log('Doing Import', $scope.importData);
-    //TODO: Implement http get to get all subsequent items, only gets 25 
+    //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
@@ -242,7 +258,7 @@ angular.module('starter.controllers', [])
           ItemService.addItem($scope.importResult.id, $scope.items[i]);
         }
         $scope.closeImport();
-      } 
+      }
     ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
       angular.extend($scope.importResult, response.data.data);
     })
@@ -253,7 +269,7 @@ angular.module('starter.controllers', [])
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
     });
-  };  
+  };
 
   //TODO: shouldn't need this anymore
   $scope.addCollectionFromPinterest = function(){
@@ -281,7 +297,7 @@ angular.module('starter.controllers', [])
               $scope.collections.push(response.data.data);
               console.log("Added Collection: " + response.data.data.name);
             });
-            
+
           }
         }
       }]
@@ -335,7 +351,7 @@ angular.module('starter.controllers', [])
     attribution: not sure
     board:
       id: string (id of board)
-      name: string 
+      name: string
       url: string
     color: string (color hex)
     counts:
@@ -346,7 +362,7 @@ angular.module('starter.controllers', [])
     id: string (unique pin id)
     image:
       original:
-        height: number 
+        height: number
         url: string
         width: number
     link: string
@@ -404,7 +420,7 @@ angular.module('starter.controllers', [])
         url: string
         width: number
     name: string (name of board)
-    page: 
+    page:
       cursor: string
       next: url (call for next 25 objects in collection)
     url: string (url to board)
@@ -436,5 +452,3 @@ angular.module('starter.controllers', [])
  }
 })
 ;
-
-
