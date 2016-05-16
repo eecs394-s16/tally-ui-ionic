@@ -222,7 +222,15 @@ angular.module('starter.controllers', [])
     //Pinterest SDK to get the user toekn
     PDK.login({scope : 'read_public, write_public'}, function(res){
       console.log(res.session.accessToken);
-      // new_user = 
+      var new_user = {
+        "username" : $scope.loginData.username,
+        "password" : $scope.loginData.password,
+        "access_token" : res.session.accessToken
+      };
+      console.log(new_user);
+      $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
+        console.log(resp);
+      })
     });
 
     $timeout(function() {
