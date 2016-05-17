@@ -218,24 +218,42 @@ angular.module('starter.controllers', [])
     console.log('Doing login', $scope.loginData);
     // UserService.addUsername($scope.loginData);
     // console.log(UserService.getUser());
+    var usr = {
+      "username" : $scope.loginData.username,
+      "password" : $scope.loginData.password
+    };
+    console.log(usr);
 
-    //Pinterest SDK to get the user toekn
-    PDK.login({scope : 'read_public, write_public'}, function(res){
-      console.log(res.session.accessToken);
-      var new_user = {
-        "username" : $scope.loginData.username,
-        "password" : $scope.loginData.password,
-        "access_token" : res.session.accessToken
-      };
-      console.log(new_user);
-      $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
-        console.log(resp);
+    $http.post("http://45.55.146.198:3002/login", usr).success(function(resp){
+      console.log(resp);
+      alert("login successfully");
+      $timeout(function() {
+        $scope.closeLogin();
+      }, 1000);
+
+      $http.defaults.headers.common['Authorization'] = resp.session.session_key;
+
+      $http.get("http://45.55.146.198:3002/collections").success(function(res){
+        console.log(res);
       })
-    });
 
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
+    })
+    .error(function(err){
+      alert("login error");
+    });
+    //Pinterest SDK to get the user toekn
+    // PDK.login({scope : 'read_public, write_public'}, function(res){
+    //   console.log(res.session.accessToken);
+    //   var new_user = {
+    //     "username" : $scope.loginData.username,
+    //     "password" : $scope.loginData.password,
+    //     "access_token" : res.session.accessToken
+    //   };
+    //   console.log(new_user);
+    //   $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
+    //     console.log(resp);
+    //   })
+    // });
 
   };
 
