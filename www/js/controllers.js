@@ -202,6 +202,8 @@ angular.module('starter.controllers', [])
 
   // Initialize the Pinterest SDK
   PDK.init({appId:'4833595787237665566', cookie: true});
+  var accessToken;
+  var pinterestUsername;
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -226,6 +228,8 @@ angular.module('starter.controllers', [])
 
     $http.post("http://45.55.146.198:3002/login", usr).success(function(resp){
       console.log(resp);
+      accessToken = resp.user.pinterest;
+      console.log("token : " + accessToken);
       alert("login successfully");
       $timeout(function() {
         $scope.closeLogin();
@@ -258,7 +262,7 @@ angular.module('starter.controllers', [])
   };
 
 
-  $ionicModal.fromTemplateUrl('templates/import.html', {
+  $ionicModal.fromTemplateUrl('templates/board-list.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.importModal = modal;
@@ -271,13 +275,24 @@ angular.module('starter.controllers', [])
   // Open the login modal
   $scope.import = function() {
     $scope.importModal.show();
+    $http.get("https://api.pinterest.com/v1/me/boards/?access_token="+accessToken+"&fields=id%2Cname%2Curl").success(function(resp){
+      console.log(resp);
+      $scope.boards = resp.data;
+    });
+    $http.get("https://api.pinterest.com/v1/me/?access_token="+accessToken+"&fields=url%2Cusername").success(function(resp){
+      console.log(resp);
+      pinterestUsername = resp.data.username;
+    });
   };
 
   // Perform the login action when the user submits the login form
-  $scope.doImport = function() {
+  $scope.doImport = function(idx) {
     //console.log('Doing Import', $scope.importData);
+    console.log(idx);
+    console.log($scope.boards[idx]);
+
     //TODO: Implement http get to get all subsequent items, only gets 25
-    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+    $http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/pins/?access_token="+accessToken+"&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
@@ -285,7 +300,7 @@ angular.module('starter.controllers', [])
         }
         $scope.closeImport();
       }
-    ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    ).then($http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/?access_token="+accessToken+"&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
       angular.extend($scope.importResult, response.data.data);
     })
     ).then(function() {

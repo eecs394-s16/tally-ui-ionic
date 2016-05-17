@@ -11,19 +11,69 @@
 }
 
 .item-thumbnail-col{
-	width:50%;
+	width:11em;
+	height:14em;
+	border:none;
+	background-color: #FFFFFF;
 	float:left;	
 }
 
+.item-thumbnail-col-inside{
+	background-color: #FFFFFF;
+	vertical-align:center;
+}
+
 .item-thumbnail-col img{
-	width: 60px;
-	height: 60px;
+	width: 4em;
+	height: 4em;
+	margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.item-details{
+	text-align: center;
+}
+
+.item-details-thumbnail {
+	height:auto;
+	width:auto;
+	max-height: 200px;
+	float:center;
+}
+
+
+.header-logo{
+	width:25px;
+	height: 25px;
+	float:left;
+	margin-top: 8px;
+	margin-right:2px;
+}
+
+.header-title{
+	float: left;
+}
+
+.item-thumbnail-create{
+	border:none;
+	background-color: #FFFFFF;
+	width:11em;
+	height:14em;
+	float:left;	
+}
+
+.item-thumbnail-create img{
+	width: 80%;
+	height: 80%;
 	margin-left: auto;
     margin-right: auto;
     display: block;
 }
 
-.item-details-thumbnail {
-	width: 100%;
-	height: 20%;
+.tally-logo {
+	margin-top: 0.4em;
+	vertical-align: center;
+	width:60px;
+	height:32px;
 }
+

@@ -1,6 +1,11 @@
-<ion-view view-title="Collection1">
-	
-    
+<ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>Collection1<h3>'>
+
+	 <ion-nav-buttons side="secondary">
+      <button class="button" ng-click="reload()">
+        Reload
+      </button>
+    </ion-nav-buttons>
+
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
         <div class="buttons">
           <button class="button button-icon icon ion-ios-minus-outline"
@@ -17,18 +22,17 @@
       </ion-header-bar>
 
       <ion-content class="has-header has-subheader">
-      <ion-list 
+      <ion-list
                 show-delete="shouldShowDelete"
                 show-reorder="shouldShowReorder"
                 can-swipe="listCanSwipe">
         <ion-item ng-repeat="item in items"
-                  class="item-thumbnail-left"
-                  href="#/app/playlists/{{item.id}}"
+                  class="item-thumbnail-top"
+                  href="#/app/collection/{{collectionId}}/{{item.id}}"
                   class="item item-thumbnail-top">
 
           <img ng-src="{{ item.image.original.url }}">
-          <h2>{{ item.creator.first_name }} {{item.creator.last_name}}</h2>
-          <h4>{{ item.created_at }}</h4>
+          <h2>{{ item.note }}</h2>
           <ion-option-button class="button-positive" ng-click="share(item)">
             Share
           </ion-option-button>
