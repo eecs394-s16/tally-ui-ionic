@@ -35,7 +35,9 @@
     	</a>
     	<a ng-repeat="(key, value) in collections" class="item item-thumbnail-col"  href="#/app/collection/{{value.id}}">
     		<div class="item item-thumbnail-col-inside">
-    		<h4>{{ value.name }}</h4>
+					<center>
+						<h4>{{ value.name }}</h4>
+					</center>
     		<img class="center" ng-src="{{ value.image['60x60'].url }}">
     		<!-- <button class="button button-small button-full button-outline button-stable" ng-click="viewCollection(value.name)"> -->
     		<button class="button button-small button-full button-outline button-stable">

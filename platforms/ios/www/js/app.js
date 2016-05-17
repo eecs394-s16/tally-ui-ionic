@@ -32,12 +32,22 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: '/search',
+  // .state('app.login', {
+  //   url:'/login',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/login.html',
+  //       controller: 'AppCtrl'
+  //     }
+  //   }
+  // })
+
+  .state('app.collection', {
+    url: '/collection/:collectionId',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html',
-        controller: 'PlaylistsCtrl'
+        templateUrl: 'templates/collection.html',
+        controller: 'CollectionCtrl'
       }
     }
   })
@@ -59,18 +69,18 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     //     }
     //   }
     // })
-  .state('app.playlists', {
-      url: '/playlists',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
-        }
-      }
-    })
+  // .state('app.playlists', {
+  //     url: '/playlists',
+  //     views: {
+  //       'menuContent': {
+  //         templateUrl: 'templates/playlists.html',
+  //         controller: 'CollectionCtrl'
+  //       }
+  //     }
+  //   })
 
   .state('app.collections', {
-    url: '/collections',
+    url: '/collection',
     views: {
       'menuContent': {
         templateUrl: 'templates/collections.html',
@@ -89,7 +99,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   //   }
   // })
   .state('app.item', {
-    url: '/playlists/:itemId',
+    url: '/collection/:collectionId/:itemId',
     views: {
       'menuContent': {
         templateUrl: 'templates/item.html',
@@ -99,21 +109,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   })
   ;
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
 
+  // $urlRouterProvider.otherwise('/app/collection');
+
+  // $urlRouterProvider.otherwise('/app/search');
+// ======
+  $urlRouterProvider.otherwise('/app/collection');
 });
-
- window.pAsyncInit = function() {
-        PDK.init({
-            appId: "4832506208411730233", // Change this
-            cookie: true
-        });
-    };
-
-    (function(d, s, id){
-        var js, pjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) {return;}
-        js = d.createElement(s); js.id = id;
-        js.src = "//assets.pinterest.com/sdk/sdk.js";
-        pjs.parentNode.insertBefore(js, pjs);
-    }(document, 'script', 'pinterest-jssdk'));
