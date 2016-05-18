@@ -51,68 +51,6 @@ angular.module('starter.controllers', [])
 
 })
 
-// .controller('CollectionCtrl', function($scope, $http) {
-//   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
-//     console.log(response.data.data);
-//     $scope.items = response.data.data;
-//   });
-//   // $scope.playlists =CollectionCtrl [
-//   //   { title: 'Reggae', id: 1 },
-//   //   { title: 'Chill', id: 2 },
-//   //   { title: 'Dubstep', id: 3 },
-//   //   { title: 'Indie', id: 4 },
-//   //   { title: 'Rap', id: 5 },
-//   //   { title: 'Cowbell', id: 6 }
-//   // ];
-// })
-
-// .controller('PlaylistsCtrl', function($scope, $http) {
-//   $http.get("https://api.pinterest.com/v1/boards/amyilyse/interiors/pins/?access_token=AX0EL2K3PBu3ZineycN4SYBiZiahFEsiwPji579DEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution").then(function(response){
-//     console.log(response.data.data);
-//     $scope.items = response.data.data;
-//   });
-
-//   $scope.closeImport = function() {
-//     $scope.importModal.hide();
-//   };
-
-//   // Open the login modal
-//   $scope.import = function() {
-//     $scope.importModal.show();
-//   };
-
-//   // Perform the login action when the user submits the login form
-//   $scope.doImport = function() {
-//     console.log('Doing Import', $scope.importData);
-//     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-//         console.log(response.data.data);
-//         $scope.items = response.data.data;
-//         for(i=0;i< $scope.items.length;i++){
-//           ItemService.addItem($scope.items[i]);
-//         }
-//       }
-//     );
-
-//     // Simulate a login delay. Remove this and replace with your login
-//     // code if using a login system
-//     $timeout(function() {
-//       $scope.closeImport();
-//     }, 1000);
-//   };
-
-//   // console.log($scope.importData)
-
-
-//   // $scope.playlists = [
-//   //   { title: 'Reggae', id: 1 },
-//   //   { title: 'Chill', id: 2 },
-//   //   { title: 'Dubstep', id: 3 },
-//   //   { title: 'Indie', id: 4 },
-//   //   { title: 'Rap', id: 5 },
-//   //   { title: 'Cowbell', id: 6 }
-//   // ];
-// })
-
 
 .controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, ItemService, CollectionService) {
 
@@ -123,6 +61,9 @@ angular.module('starter.controllers', [])
   $scope.collectionId = $stateParams.collectionId;
   $scope.items = ItemService.getItems($stateParams.collectionId);
   console.log($scope.items);
+
+  $scope.collection = CollectionService.getCollection($scope.collectionId);
+
   $scope.importData = {}
   $scope.reload = function() {
     $scope.items = ItemService.getItems($stateParams.collectionId);
@@ -161,6 +102,27 @@ angular.module('starter.controllers', [])
       $scope.importData = {};
       $scope.showHeaderBar = true;
     }, 1000);
+  };
+
+  $ionicModal.fromTemplateUrl('templates/edit-collection.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.editCollectionModal = modal;
+  });
+
+  $scope.updatedCollection = {};
+
+  $scope.hideCollectionEdit = function() {
+    $scope.editCollectionModal.hide();
+  };
+
+  $scope.showCollectionEdit = function() {
+    $scope.editCollectionModal.show();
+  };
+  $scope.editCollection = function() {
+    CollectionService.updateCollection($scope.collection, $scope.updatedCollection);
+    $scope.editCollectionModal.hide();
+    $scope.updatedCollection = {};
   };
 
   // console.log($scope.importData)
@@ -389,7 +351,6 @@ angular.module('starter.controllers', [])
       angular.extend($scope.importResult, response.data.data);
     })
     ).then(function() {
-      console.log("NOAH $scope.importResult:");
       console.log($scope.importResult);
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
@@ -641,7 +602,7 @@ angular.module('starter.controllers', [])
  return {
    collections: {},
    getCollections: function() {
-         return this.collections;
+    return this.collections;
    },
    getCollection: function(collectionId) {
      return this.collections[collectionId];
@@ -649,6 +610,18 @@ angular.module('starter.controllers', [])
    addCollection: function(collection) {
     this.collections[collection.id] = collection;
     console.log(this.collections);
+   },
+   updateCollection: function(oldCollection, newCollection) {
+    // this.collections[oldCollection.id] = newCollection;
+
+    for (var key in newCollection) {
+
+      if (oldCollection.hasOwnProperty(key)){
+        oldCollection[key] = newCollection[key];
+      }
+
+    }
+    return this.collections[oldCollection.id];
    }
  }
 })

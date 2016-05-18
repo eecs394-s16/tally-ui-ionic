@@ -1,6 +1,9 @@
-<ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>Collection1<h3>'>
+<ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>&nbsp{{ collection.name }}<h3>'>
 
 	 <ion-nav-buttons side="secondary">
+      <button class="button" ng-click="showCollectionEdit()">
+        Edit
+      </button>
       <button class="button" ng-click="reload()">
         Reload
       </button>
