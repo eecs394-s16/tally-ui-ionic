@@ -233,25 +233,19 @@ angular.module('starter.controllers', [])
 
 })
 
-
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, $state, UserService, CollectionService, ItemService) {
+.controller('LoginCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, UserService){
   $scope.loginData = {};
   $scope.signUpData = {};
-  $scope.collections = CollectionService.getCollections();
-  $scope.importData = {};
-  $scope.importResult = {};
 
-  // Initialize the Pinterest SDK
+  //Initialize the Pinterest SDK
   PDK.init({appId:'4833595787237665566', cookie: true});
-  var accessToken;
-  var pinterestUsername;
+  // var accessToken;
+  // var pinterestUsername;
 
-  // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
-    // console.log(modal);
   });
 
   $ionicModal.fromTemplateUrl('templates/sign-up.html', {
@@ -289,12 +283,8 @@ angular.module('starter.controllers', [])
         $scope.signUpModal.hide();
       });
     });
-
-
-    // $scope.modal.hide();
   }
 
-  // Triggered in the login modal to close it
   $scope.closeLogin = function() {
     $scope.modal.hide();
   };
@@ -307,23 +297,17 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-
-    // console.log(UserService.getUser());
     var usr = {
       "username" : $scope.loginData.username,
       "password" : $scope.loginData.password
     };
-    console.log(usr);
 
     $http.post("http://45.55.146.198:3002/login", usr).success(function(resp){
-      console.log(resp);
-      accessToken = resp.user.pinterest;
+      // console.log(resp);
       UserService.setToken(resp.user.pinterest);
       UserService.setCookie(resp.session.session_key);
-      // console.log(UserService.cookieSet());
       UserService.addUsername($scope.loginData);
-      console.log("token : " + accessToken);
-      // alert("login successfully");
+      // console.log("token : " + accessToken);
       $timeout(function() {
         $scope.closeLogin();
       }, 1000);
@@ -333,32 +317,28 @@ angular.module('starter.controllers', [])
       }, 0);
 
 
-      $http.defaults.headers.common['Authorization'] = resp.session.session_key;
-
-      $http.get("http://45.55.146.198:3002/collections").success(function(res){
-        console.log(res);
-      });
+      // $http.defaults.headers.common['Authorization'] = resp.session.session_key;
+      //
+      // $http.get("http://45.55.146.198:3002/collections").success(function(res){
+      //   console.log(res);
+      // });
 
     })
     .error(function(err){
       alert("login error");
     });
-    //Pinterest SDK to get the user toekn
-    // PDK.login({scope : 'read_public, write_public'}, function(res){
-    //   console.log(res.session.accessToken);
-    //   var new_user = {
-    //     "username" : $scope.loginData.username,
-    //     "password" : $scope.loginData.password,
-    //     "access_token" : res.session.accessToken
-    //   };
-    //   console.log(new_user);
-    //   $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
-    //     console.log(resp);
-    //   })
-    // });
+  }
 
-  };
+})
 
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, $state, UserService, CollectionService, ItemService) {
+  $scope.collections = CollectionService.getCollections();
+  $scope.importData = {};
+  $scope.importResult = {};
+
+  // Initialize the Pinterest SDK
+  PDK.init({appId:'4833595787237665566', cookie: true});
+  var pinterestUsername;
 
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
     scope: $scope
