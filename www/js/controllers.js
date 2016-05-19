@@ -279,6 +279,13 @@ angular.module('starter.controllers', [])
       };
       $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
         alert("Success Creating a new User");
+        UserService.setToken(resp.user.pinterest);
+        UserService.setCookie(resp.session.session_key);
+        // console.log(UserService.cookieSet());
+        UserService.addUsername($scope.signupData);
+        $timeout(function(){
+            $state.go('app.collections');
+        }, 0);
         $scope.signUpModal.hide();
       });
     });
