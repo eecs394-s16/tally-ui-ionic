@@ -241,12 +241,18 @@ angular.module('starter.controllers', [])
   $scope.importData = {};
   $scope.importResult = {};
 
+  // Initialize the Pinterest SDK
+  PDK.init({appId:'4833595787237665566', cookie: true});
+  var accessToken;
+  var pinterestUsername;
+
   // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
+  // $ionicModal.fromTemplateUrl('templates/login.html', {
+  //   scope: $scope
+  // }).then(function(modal) {
+  //   $scope.modal = modal;
+  //   // console.log(modal);
+  // });
 
   $ionicModal.fromTemplateUrl('templates/sign-up.html', {
     scope: $scope
@@ -263,13 +269,23 @@ angular.module('starter.controllers', [])
   }
 
   $scope.doSignUp = function () {
-    console.log('Doing login', $scope.loginData);
-  }
+    console.log('Doing signUp', $scope.signUpData);
+    PDK.login({scope : 'read_public, write_public'}, function(res){
+      console.log(res.session.accessToken);
+      new_user = {
+        "username" : $scope.signUpData.username,
+        "password" : $scope.signUpData.password,
+        "access_token" :  res.session.accessToken
+      };
+      $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
+        alert("Success Creating a new User");
+        $scope.signUpModal.hide();
+      });
+    });
 
-  // Initialize the Pinterest SDK
-  PDK.init({appId:'4833595787237665566', cookie: true});
-  var accessToken;
-  var pinterestUsername;
+
+    // $scope.modal.hide();
+  }
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -280,6 +296,18 @@ angular.module('starter.controllers', [])
   $scope.login = function() {
     $scope.modal.show();
   };
+
+  function showLogin(){
+    $ionicModal.fromTemplateUrl('templates/login.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+      $scope.modal.show();
+    });
+    // $scope.modal.show();
+  }
+
+  showLogin();
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
@@ -296,7 +324,7 @@ angular.module('starter.controllers', [])
       console.log(resp);
       accessToken = resp.user.pinterest;
       console.log("token : " + accessToken);
-      alert("login successfully");
+      // alert("login successfully");
       $timeout(function() {
         $scope.closeLogin();
       }, 1000);
