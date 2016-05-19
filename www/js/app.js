@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $rootScope, $state, $location, UserService) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,6 +20,23 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       StatusBar.styleDefault();
     }
   });
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+    console.log("state change: from state: " + fromState.name + " to state: " + toState.name);
+    console.log(UserService.cookieSet());
+        if  (toState.name !== 'app.login' && !UserService.cookieSet()){
+          console.log("test")
+          console.log(UserService.getUser());
+            // $state.go('app.login', {'toState': toState.name, 'toParams': toParams});
+            $state.transitionTo('app.login');
+            event.preventDefault();
+            // $location.url('/collection');
+        }
+        // else if (UserService.cookieSet()){
+        //   console.log(fromState.name);
+        //   $state.go('app.collections');
+        //   // event.default();
+        // }
+    });
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -63,6 +80,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     })
     .state('app.login', {
       url: '/login',
+      params: {
+        'toState' : 'collection',
+        'toParams' : {}
+      },
       views: {
         'menuContent': {
           templateUrl: 'templates/login.html',

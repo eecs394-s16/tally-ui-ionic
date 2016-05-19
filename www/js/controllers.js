@@ -234,7 +234,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, UserService, CollectionService, ItemService) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, $state, UserService, CollectionService, ItemService) {
   $scope.loginData = {};
   $scope.signUpData = {};
   $scope.collections = CollectionService.getCollections();
@@ -247,12 +247,12 @@ angular.module('starter.controllers', [])
   var pinterestUsername;
 
   // Create the login modal that we will use later
-  // $ionicModal.fromTemplateUrl('templates/login.html', {
-  //   scope: $scope
-  // }).then(function(modal) {
-  //   $scope.modal = modal;
-  //   // console.log(modal);
-  // });
+  $ionicModal.fromTemplateUrl('templates/login.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+    // console.log(modal);
+  });
 
   $ionicModal.fromTemplateUrl('templates/sign-up.html', {
     scope: $scope
@@ -297,22 +297,10 @@ angular.module('starter.controllers', [])
     $scope.modal.show();
   };
 
-  function showLogin(){
-    $ionicModal.fromTemplateUrl('templates/login.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.modal = modal;
-      $scope.modal.show();
-    });
-    // $scope.modal.show();
-  }
-
-  showLogin();
-
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-    // UserService.addUsername($scope.loginData);
+
     // console.log(UserService.getUser());
     var usr = {
       "username" : $scope.loginData.username,
@@ -323,17 +311,26 @@ angular.module('starter.controllers', [])
     $http.post("http://45.55.146.198:3002/login", usr).success(function(resp){
       console.log(resp);
       accessToken = resp.user.pinterest;
+      UserService.setToken(resp.user.pinterest);
+      UserService.setCookie(resp.session.session_key);
+      // console.log(UserService.cookieSet());
+      UserService.addUsername($scope.loginData);
       console.log("token : " + accessToken);
       // alert("login successfully");
       $timeout(function() {
         $scope.closeLogin();
       }, 1000);
 
+      $timeout(function(){
+          $state.go('app.collections');
+      }, 0);
+
+
       $http.defaults.headers.common['Authorization'] = resp.session.session_key;
 
       $http.get("http://45.55.146.198:3002/collections").success(function(res){
         console.log(res);
-      })
+      });
 
     })
     .error(function(err){
@@ -369,11 +366,12 @@ angular.module('starter.controllers', [])
   // Open the login modal
   $scope.import = function() {
     $scope.importModal.show();
-    $http.get("https://api.pinterest.com/v1/me/boards/?access_token="+accessToken+"&fields=id%2Cname%2Curl").success(function(resp){
+    console.log(UserService.getToken());
+    $http.get("https://api.pinterest.com/v1/me/boards/?access_token="+UserService.getToken()+"&fields=id%2Cname%2Curl").success(function(resp){
       console.log(resp);
       $scope.boards = resp.data;
     });
-    $http.get("https://api.pinterest.com/v1/me/?access_token="+accessToken+"&fields=url%2Cusername").success(function(resp){
+    $http.get("https://api.pinterest.com/v1/me/?access_token="+UserService.getToken()+"&fields=url%2Cusername").success(function(resp){
       console.log(resp);
       pinterestUsername = resp.data.username;
     });
@@ -386,7 +384,7 @@ angular.module('starter.controllers', [])
     console.log($scope.boards[idx]);
 
     //TODO: Implement http get to get all subsequent items, only gets 25
-    $http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/pins/?access_token="+accessToken+"&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+    $http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/pins/?access_token="+UserService.getToken()+"&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
@@ -394,7 +392,7 @@ angular.module('starter.controllers', [])
         }
         $scope.closeImport();
       }
-    ).then($http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/?access_token="+accessToken+"&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+    ).then($http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/?access_token="+UserService.getToken()+"&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
       angular.extend($scope.importResult, response.data.data);
     })
     ).then(function() {
@@ -675,11 +673,25 @@ angular.module('starter.controllers', [])
 .service('UserService', function() {
  return {
    user: {},
+   token: {},
+   isAuthed : false,
    getUser: function() {
       return this.user;
    },
    addUsername: function(user) {
       this.user = user;
+   },
+   setCookie: function(sessionKey){
+     this.isAuthed = true;
+   },
+   cookieSet: function(){
+     return this.isAuthed;
+   },
+   setToken: function(accessToken){
+     this.token = accessToken;
+   },
+   getToken: function(){
+     return this.token;
    }
  }
 })
