@@ -274,6 +274,7 @@ angular.module('starter.controllers', [])
 
 .controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, UserService, CollectionService, ItemService) {
   $scope.loginData = {};
+  $scope.signUpData = {};
   $scope.collections = CollectionService.getCollections();
   $scope.importData = {};
   $scope.importResult = {};
@@ -284,6 +285,24 @@ angular.module('starter.controllers', [])
   }).then(function(modal) {
     $scope.modal = modal;
   });
+
+  $ionicModal.fromTemplateUrl('templates/sign-up.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.signUpModal = modal;
+  });
+
+  $scope.closeSignUp = function(){
+    $scope.signUpModal.hide();
+  };
+
+  $scope.signUp = function(){
+    $scope.signUpModal.show();
+  }
+
+  $scope.doSignUp = function () {
+    console.log('Doing login', $scope.loginData);
+  }
 
   // Initialize the Pinterest SDK
   PDK.init({appId:'4833595787237665566', cookie: true});

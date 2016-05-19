@@ -29,7 +29,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+    controller: 'CollectionsCtrl'
   })
 
   // .state('app.login', {
@@ -58,6 +58,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         'menuContent': {
           templateUrl: 'templates/browse.html',
           controller: 'InteractCtrl'
+        }
+      }
+    })
+    .state('app.login', {
+      url: '/login',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/login.html',
+          controller: 'CollectionsCtrl'
         }
       }
     })

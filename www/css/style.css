@@ -20,7 +20,7 @@
 	height:14em;
 	border:none;
 	background-color: #FFFFFF;
-	float:left;	
+	float:left;
 }
 
 .item-thumbnail-col-inside{
@@ -115,7 +115,7 @@
 	background-color: #FFFFFF;
 	width:11em;
 	height:14em;
-	float:left;	
+	float:left;
 }
 
 .item-thumbnail-create img{
@@ -132,3 +132,31 @@
 	width:60px;
 	height:32px;
 }
+
+.login-background {
+	width: 100%;
+	height: 100%;
+	/*background-color: #C92228;*/
+	background-image: url("../img//tally-wordmark-gray.png");
+	background-size: 20% 10%;
+	background-position: 50% 70%;
+	background-repeat: no-repeat;
+}
+
+/*.login-form {
+	/*background-color: red;*/
+	/*position: fixed;
+	top: 10%;
+	/*bottom: 35%;*/
+	/*right: 10%;
+	left: 10%
+}*/
+
+/*.sign-up{
+	position: fixed;
+	width: 300px;
+	left: 50%;
+	margin-left: -75px;*/
+	/*right: 35%;*/
+	/*top: 38%;*/
+/*}*/
