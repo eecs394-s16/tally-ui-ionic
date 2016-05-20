@@ -8,7 +8,7 @@ angular.module('starter.controllers', [])
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
+  //$scope.$on('$ionicModalnicView.enter', function(e) {
   //});
   // Form data for the login modal
   $scope.loginData = {};
@@ -82,6 +82,12 @@ angular.module('starter.controllers', [])
   // Open the import modal
   $scope.import = function() {
     $scope.importModal.show();
+  };
+
+  $scope.setPrice = function(item) {
+    if (item.metadata.hasOwnProperty('product')){
+      angular.extend(item, {price: item.metadata.product.offer.price})
+    }
   };
 
   // Perform the import action when the user submits the import form
