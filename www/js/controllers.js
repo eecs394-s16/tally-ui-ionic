@@ -87,7 +87,10 @@ angular.module('starter.controllers', [])
   $scope.setPrice = function(item) {
     if (item.metadata.hasOwnProperty('product')){
       angular.extend(item, {price: item.metadata.product.offer.price})
+    } else {
+      //TODO: parse the item description for price 
     }
+    return item
   };
 
   // Perform the import action when the user submits the import form
@@ -97,6 +100,7 @@ angular.module('starter.controllers', [])
         CollectionService.addCollection(response.data.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
+          currentItem = $scope.items[i]
           ItemService.addItem($stateParams.collectionId, $scope.items[i]);
         }
       }
