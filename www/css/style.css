@@ -1,10 +1,29 @@
 /* Empty. Add your own CSS if you like */
 .item-thumbnail-top{
-	max-width: 100px;
-  max-height: 150px;
+	max-width: 185px;
+  height:auto;
 	float:left;
+  padding:0;
+
 
 }
+
+.price-tag{
+  z-index:100;
+}
+
+.price{
+  width:35%;
+  float:left;
+  padding: 15px 0 0 5px;
+}
+.price-slider{
+  border: none;
+  padding: 15px 0;
+  width:60%;
+  float:left;
+}
+
 
 .item-thumbnail-top .item-content{
   padding: 0 0 0 0;
@@ -13,9 +32,8 @@
 
 .item-thumbnail-top img{
 	width:100%;
+  z-index: 100;
   height:auto;
-	
-
 
 }
 .collection-items{
@@ -84,7 +102,7 @@
 .drag-drop {
   display: inline-block;
   min-width: 40px;
- 
+   border: solid 1px #d3d3d3;
 
   color: #fff;
 
