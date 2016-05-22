@@ -400,6 +400,54 @@ angular.module('starter.controllers', [])
     });
   };
 
+  //Import a board using username and boardname
+  $ionicModal.fromTemplateUrl('templates/import.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.import2Modal = modal;
+  });
+
+  $scope.closeImport2 = function() {
+    $scope.import2Modal.hide();
+  };
+
+  $scope.import2 = function() {
+    $scope.import2Modal.show();
+    // console.log(UserService.getToken());
+    // $http.get("https://api.pinterest.com/v1/me/boards/?access_token="+UserService.getToken()+"&fields=id%2Cname%2Curl").success(function(resp){
+    //   console.log(resp);
+    //   $scope.boards = resp.data;
+    // });
+    // $http.get("https://api.pinterest.com/v1/me/?access_token="+UserService.getToken()+"&fields=url%2Cusername").success(function(resp){
+    //   console.log(resp);
+    //   pinterestUsername = resp.data.username;
+    // });
+  };
+
+  // Perform the login action when the user submits the login form
+  $scope.doImport2 = function() {
+    //console.log('Doing Import', $scope.importData);
+
+    //TODO: Implement http get to get all subsequent items, only gets 25
+    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+        angular.extend($scope.importResult, response.data);
+        $scope.items = response.data.data;
+        for(i=0;i< $scope.items.length;i++){
+          ItemService.addItem($scope.importResult.id, $scope.items[i]);
+        }
+        $scope.closeImport2();
+      }
+    ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+      angular.extend($scope.importResult, response.data.data);
+    })
+    ).then(function() {
+      console.log($scope.importResult);
+      CollectionService.addCollection($scope.importResult);
+      $scope.collections = CollectionService.getCollections();
+      $scope.importResult = {};
+    });
+  };
+
   //TODO: shouldn't need this anymore
   $scope.addCollectionFromPinterest = function(){
 

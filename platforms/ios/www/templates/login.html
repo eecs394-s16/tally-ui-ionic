@@ -1,9 +1,9 @@
 <ion-modal-view>
   <ion-header-bar>
-    <h1 class="title">Tally</h1>
-    <div class="buttons">
+    <h1 class="title">Welcome</h1>
+    <!-- <div class="buttons">
       <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
+    </div> -->
   </ion-header-bar>
   <ion-content class="login-background">
     <form ng-submit="doLogin()">
@@ -17,12 +17,12 @@
           <input type="password" placeholder="Password" ng-model="loginData.password">
         </label>
         <!-- <label class="item"> -->
-          <button class="button button-block button-positive" type="submit">Submit</button>
+          <button class="button button-block button-positive" type="submit">Log in</button>
         <!-- </label> -->
       </div>
     </form>
     <div class="list list-inset">
-      <button class="button button-block button-light" href="#">Sign Up for Tally</button>
+      <button class="button button-block button-light" ng-click="signUp()">Sign Up for Tally</button>
     </div>
   </ion-content>
 </ion-modal-view>
