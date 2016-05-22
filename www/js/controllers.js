@@ -64,55 +64,57 @@ angular.module('starter.controllers', [])
 
   $scope.collection = CollectionService.getCollection($scope.collectionId);
 
-  $scope.importData = {}
-  $scope.reload = function() {
-    $scope.items = ItemService.getItems($stateParams.collectionId);
-    console.log($scope.items);
-  }
-  $ionicModal.fromTemplateUrl('templates/import.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.importModal = modal;
-  });
+  // $scope.importData = {}
+  // $scope.reload = function() {
+  //   $scope.items = ItemService.getItems($stateParams.collectionId);
+  //   console.log($scope.items);
+  // }
+  // $ionicModal.fromTemplateUrl('templates/import.html', {
+  //   scope: $scope
+  // }).then(function(modal) {
+  //   $scope.importModal = modal;
+  // });
 
-  $scope.closeImport = function() {
-    $scope.importModal.hide();
-  };
+  // $scope.closeImport = function() {
+  //   $scope.importModal.hide();
+  // };
 
-  // Open the import modal
-  $scope.import = function() {
-    $scope.importModal.show();
-  };
+  // // Open the import modal
+  // $scope.import = function() {
+  //   $scope.importModal.show();
+  // };
 
-  $scope.setPrice = function(item) {
-    if (item.metadata.hasOwnProperty('product')){
-      angular.extend(item, {price: item.metadata.product.offer.price})
-    } else {
-      //TODO: parse the item description for price 
-    }
-    return item
-  };
+  // $scope.setPrice = function(item) {
+  //   if (item.metadata.hasOwnProperty('product')){
+  //     angular.extend(item, {price: item.metadata.product.offer.price})
+  //   } else {
+  //     //TODO: parse the item description for price 
+  //     angular.extend(item, {price: 0})
+  //   }
+  //   return item
+  // };
 
-  // Perform the import action when the user submits the import form
-  $scope.doImport = function() {
-    //TODO: Implement http get to get all subsequent items, only gets 25
-    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        CollectionService.addCollection(response.data.data);
-        $scope.items = response.data.data;
-        for(i=0;i< $scope.items.length;i++){
-          currentItem = $scope.items[i]
-          ItemService.addItem($stateParams.collectionId, $scope.items[i]);
-        }
-      }
-    );
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeImport();
-      $scope.importData = {};
-      $scope.showHeaderBar = true;
-    }, 1000);
-  };
+  // // Perform the import action when the user submits the import form
+  // $scope.doImport = function() {
+  //   //TODO: Implement http get to get all subsequent items, only gets 25
+  //   $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+  //       CollectionService.addCollection(response.data.data);
+  //       $scope.items = response.data.data;
+  //       for(i=0;i< $scope.items.length;i++){
+  //         currentItem = $scope.items[i];
+  //         currentItem = setPrice(currentItem);
+  //         ItemService.addItem($stateParams.collectionId, currentItem);
+  //       }
+  //     }
+  //   );
+  //   // Simulate a login delay. Remove this and replace with your login
+  //   // code if using a login system
+  //   $timeout(function() {
+  //     $scope.closeImport();
+  //     $scope.importData = {};
+  //     $scope.showHeaderBar = true;
+  //   }, 1000);
+  // };
 
   $ionicModal.fromTemplateUrl('templates/edit-collection.html', {
     scope: $scope
@@ -350,6 +352,16 @@ angular.module('starter.controllers', [])
   PDK.init({appId:'4833595787237665566', cookie: true});
   var pinterestUsername;
 
+  $scope.setPrice = function(item) {
+    if (item.metadata.hasOwnProperty('product')){
+      angular.extend(item, {price: item.metadata.product.offer.price})
+    } else {
+      //TODO: parse the item description for price 
+      angular.extend(item, {price: 0})
+    }
+    return item
+  };
+
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
     scope: $scope
   }).then(function(modal) {
@@ -385,7 +397,9 @@ angular.module('starter.controllers', [])
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.importResult.id, $scope.items[i]);
+          currentItem = $scope.items[i];
+          currentItem = setPrice(currentItem);
+          ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport();
       }
@@ -426,14 +440,17 @@ angular.module('starter.controllers', [])
 
   // Perform the login action when the user submits the login form
   $scope.doImport2 = function() {
-    //console.log('Doing Import', $scope.importData);
+    console.log('Doing Import', $scope.importData);
 
     //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+        console.log($scope.importData)
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.importResult.id, $scope.items[i]);
+          currentItem = $scope.items[i];
+          currentItem = setPrice(currentItem);
+          ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport2();
       }
