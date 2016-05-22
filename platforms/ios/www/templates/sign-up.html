@@ -1,26 +1,27 @@
-<ion-view>
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Sign Up</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeSignUp()">Close</button>
+    </div>
+  </ion-header-bar>
   <ion-content class="login-background">
       <div class="login-form">
-      <form ng-submit="doLogin()">
+      <form ng-submit="doSignUp()">
         <div class="list">
           <label class="item item-input">
-            <!-- <span class="input">User Name</span> -->
-            <input type="text" placeholder="Username" ng-model="loginData.username">
+            <span class="input-label">User Name</span>
+            <input type="text"  ng-model="signUpData.username">
           </label>
           <label class="item item-input">
-            <!-- <span class="input">Password</span> -->
-            <input type="password" placeholder="Password" ng-model="loginData.password">
+            <span class="input-label">Password</span>
+            <input type="password" ng-model="signUpData.password">
           </label>
-          <!-- <label class="item"> -->
+          <label class="item">
             <button class="button button-block button-positive" type="submit">Sign Up</button>
-          <!-- </label> -->
+          </label>
         </div>
       </form>
     </div>
-    <div class="sign-up">
-      <button class="button button-outline button-positive" href="#">
-          Sign up for Tally
-      </button>
-    </div>
   </ion-content>
-</ion-view>
+</ion-modal-view>
