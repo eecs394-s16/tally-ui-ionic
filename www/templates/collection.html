@@ -13,8 +13,8 @@
         <h1 class="title">$9000</h1>
       </ion-header-bar>
 
-      <ion-content id = "collection-items" class="has-header has-subheader">
-        <ion-item ng-repeat="item in items" data-tap-disabled = "true"
+      <ion-content id = "collection-items" scroll = "true" data-tap-disabled = "false" class="has-header has-subheader">
+        <ion-item ng-repeat="item in items" 
                   class="item-thumbnail-top draggable drag-drop">
           <a href="#/app/collection/{{collectionId}}/{{item.id}}">
             <img ng-src="{{ item.image.original.url }}">

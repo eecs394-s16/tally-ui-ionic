@@ -52,7 +52,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, ItemService, CollectionService) {
+.controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, $ionicScrollDelegate, ItemService, CollectionService) {
 
   $scope.shouldShowDelete = false;
   $scope.shouldShowReorder = false;
@@ -125,6 +125,10 @@ angular.module('starter.controllers', [])
     $scope.updatedCollection = {};
   };
 
+
+
+
+
   // console.log($scope.importData)
 
     $scope.data = {
@@ -166,6 +170,7 @@ angular.module('starter.controllers', [])
       // call this function on every dragend event
       onend: function (event) {
         var textEl = event.target.querySelector('p');
+        $ionicScrollDelegate.freezeScroll(false);
 
         textEl && (textEl.textContent =
           'moved a distance of '
@@ -175,6 +180,9 @@ angular.module('starter.controllers', [])
     });
 
     function dragMoveListener (event) {
+      // $ionicScrollDelegate.getScrollView().options.scrollingY = false;
+      // $ionicScrollDelegate.getScrollView().__enableScrollY = false;
+      $ionicScrollDelegate.freezeScroll(true);
       var target = event.target,
           // keep the dragged position in the data-x/data-y attributes
           x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
