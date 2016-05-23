@@ -9,11 +9,10 @@
     <img ng-src="{{itemDetails.image.original.url}}" class="item-details-thumbnail">
     <ion-item>Name: {{itemDetails.name}} </ion-item>
     <ion-item>Item ID: {{ itemDetails.id }} </ion-item>
-    <ion-item>Price: {{itemDetails.price}} </ion-item>
+    <ion-item>Price: ${{itemDetails.price}} </ion-item>
     <ion-item>Description: {{ itemDetails.note }} </ion-item>
     <ion-item>Group: {{itemDetails.group}} </ion-item>
     <ion-item href="{{itemDetails.link}}">External Link</ion-item>
-    <ion-item>Price: {{ itemDetails.metadata.product.offer.price }}</ion-item>
 
 <!--     <ion-list>
       <ion-item ng-repeat='(key, value) in allItems'>{{key}} hi {{value.id}}</ion-item>

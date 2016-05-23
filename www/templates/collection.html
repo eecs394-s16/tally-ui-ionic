@@ -21,7 +21,7 @@
           </a>
           <div class = "price-tag">
             <h2 class = "price">${{ item.price }}</h2>
-            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-click="toggleItem(item.id)">Tally</ion-toggle>
+            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()">Tally</ion-toggle> 
           </div>
         </ion-item>
 

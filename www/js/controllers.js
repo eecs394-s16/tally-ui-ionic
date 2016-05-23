@@ -79,14 +79,6 @@ angular.module('starter.controllers', [])
   };
   $scope.totalPrice = $scope.calculateSum();
 
-  $scope.toggleItem = function(itemId){
-    $scope.items[itemId].toggle = !($scope.items[itemId].toggle);
-    console.log("NOAH toggleItem");
-    console.log($scope.items[itemId].toggle);
-
-    $scope.calculateSum();
-  };
-
   $ionicModal.fromTemplateUrl('templates/edit-collection.html', {
     scope: $scope
   }).then(function(modal) {
@@ -345,14 +337,8 @@ angular.module('starter.controllers', [])
       detectedCurrency = priceMatch[0].substring(0, 1);
       priceValue = Number(priceMatch[1]);
     } else {
-      // if (priceValue.includes(' ')) {
-      //   console.log("NOAH priceValue:" + priceValue);
-      //   [detectedCurrency, priceValue] = priceValue.split(' ', 2);
-      //   console.log("NOAH " + detectedCurrency + " " + priceValue);
-      // } else{
         detectedCurrency = "$";
         priceValue = 0.0;
-      // }
     }
 
     // TODO: Convert currency from detected to US dollars
