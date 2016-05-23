@@ -60,61 +60,32 @@ angular.module('starter.controllers', [])
   $scope.showHeaderBar = true;
   $scope.collectionId = $stateParams.collectionId;
   $scope.items = ItemService.getItems($stateParams.collectionId);
+  
   console.log($scope.items);
 
   $scope.collection = CollectionService.getCollection($scope.collectionId);
 
-  // $scope.importData = {}
-  // $scope.reload = function() {
-  //   $scope.items = ItemService.getItems($stateParams.collectionId);
-  //   console.log($scope.items);
-  // }
-  // $ionicModal.fromTemplateUrl('templates/import.html', {
-  //   scope: $scope
-  // }).then(function(modal) {
-  //   $scope.importModal = modal;
-  // });
+  $scope.calculateSum = function() {
 
-  // $scope.closeImport = function() {
-  //   $scope.importModal.hide();
-  // };
+    sum = 0;
+    for (var key in $scope.items) {
+      if ($scope.items[key].toggle){
+        sum += $scope.items[key].price;
+      }
+    }
 
-  // // Open the import modal
-  // $scope.import = function() {
-  //   $scope.importModal.show();
-  // };
+    $scope.totalPrice = sum;
+    return sum;
+  };
+  $scope.totalPrice = $scope.calculateSum();
 
-  // $scope.setPrice = function(item) {
-  //   if (item.metadata.hasOwnProperty('product')){
-  //     angular.extend(item, {price: item.metadata.product.offer.price})
-  //   } else {
-  //     //TODO: parse the item description for price 
-  //     angular.extend(item, {price: 0})
-  //   }
-  //   return item
-  // };
+  $scope.toggleItem = function(itemId){
+    $scope.items[itemId].toggle = !($scope.items[itemId].toggle);
+    console.log("NOAH toggleItem");
+    console.log($scope.items[itemId].toggle);
 
-  // // Perform the import action when the user submits the import form
-  // $scope.doImport = function() {
-  //   //TODO: Implement http get to get all subsequent items, only gets 25
-  //   $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-  //       CollectionService.addCollection(response.data.data);
-  //       $scope.items = response.data.data;
-  //       for(i=0;i< $scope.items.length;i++){
-  //         currentItem = $scope.items[i];
-  //         currentItem = setPrice(currentItem);
-  //         ItemService.addItem($stateParams.collectionId, currentItem);
-  //       }
-  //     }
-  //   );
-  //   // Simulate a login delay. Remove this and replace with your login
-  //   // code if using a login system
-  //   $timeout(function() {
-  //     $scope.closeImport();
-  //     $scope.importData = {};
-  //     $scope.showHeaderBar = true;
-  //   }, 1000);
-  // };
+    $scope.calculateSum();
+  };
 
   $ionicModal.fromTemplateUrl('templates/edit-collection.html', {
     scope: $scope
@@ -353,13 +324,34 @@ angular.module('starter.controllers', [])
   var pinterestUsername;
 
   $scope.setPrice = function(item) {
+
+    var priceMatch = false;
     if (item.metadata.hasOwnProperty('product')){
-      angular.extend(item, {price: item.metadata.product.offer.price})
+      priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
     } else {
       //TODO: parse the item description for price 
-      angular.extend(item, {price: 0})
+      priceMatch = item.note.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
     }
-    return item
+
+    if (priceMatch) {
+      detectedCurrency = priceMatch[0].substring(0, 1);
+      priceValue = Number(priceMatch[1]);
+    } else {
+      // if (priceValue.includes(' ')) {
+      //   console.log("NOAH priceValue:" + priceValue);
+      //   [detectedCurrency, priceValue] = priceValue.split(' ', 2);
+      //   console.log("NOAH " + detectedCurrency + " " + priceValue);
+      // } else{
+        detectedCurrency = "$";
+        priceValue = 0.0;
+      // }
+    }
+
+    // TODO: Convert currency from detected to US dollars
+    detectedCurrency = "$";
+
+    angular.extend(item, {price: priceValue, toggle: false});
+    return item;
   };
 
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
@@ -398,7 +390,7 @@ angular.module('starter.controllers', [])
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
-          currentItem = setPrice(currentItem);
+          currentItem = $scope.setPrice(currentItem);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport();
@@ -449,7 +441,7 @@ angular.module('starter.controllers', [])
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
-          currentItem = setPrice(currentItem);
+          currentItem = $scope.setPrice(currentItem);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport2();

@@ -10,7 +10,7 @@
     </ion-nav-buttons>
 
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
-        <h1 class="title">$9000</h1>
+        <h1 class="title">${{ totalPrice }}</h1>
       </ion-header-bar>
 
       <ion-content id = "collection-items" class="has-header has-subheader">
@@ -20,8 +20,8 @@
             <img ng-src="{{ item.image.original.url }}">
           </a>
           <div class = "price-tag">
-            <h2 class = "price">{{ item.metadata.product.offer.price }}</h2>
-            <ion-toggle class="price-slider" toggle-class="toggle-calm">Tally</ion-toggle>
+            <h2 class = "price">${{ item.price }}</h2>
+            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-click="toggleItem(item.id)">Tally</ion-toggle>
           </div>
         </ion-item>
 
