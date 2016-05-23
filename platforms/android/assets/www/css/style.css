@@ -1,33 +1,57 @@
 /* Empty. Add your own CSS if you like */
 .item-thumbnail-top{
-	width:50%;
-	float:left;	
+	max-width: 100px;
+  max-height: 150px;
+	float:left;
+
 }
+
+.item-thumbnail-top .item-content{
+  padding: 0 0 0 0;
+
+  }
 
 .item-thumbnail-top img{
-	width: 100%;
-	height: 150px;
+	width:100%;
+  height:auto;
+	
+
 
 }
-
+.collection-items{
+  min-height: 500px;
+  height: 100%;
+}
 .item-thumbnail-col{
-	width:50%;
-	float:left;	
+	width:11em;
+	height:14em;
+	border:none;
+	background-color: #FFFFFF;
+	float:left;
+}
+
+.item-thumbnail-col-inside{
+	background-color: #FFFFFF;
+	vertical-align:center;
 }
 
 .item-thumbnail-col img{
-	width: 60px;
-	height: 60px;
+	width: 4em;
+	height: 4em;
 	margin-left: auto;
     margin-right: auto;
     display: block;
 }
-
-.item-details-thumbnail {
-	width: 100%;
-	height: 20%;
+.item-details{
+	text-align: center;
 }
 
+.item-details-thumbnail {
+	height:auto;
+	width:auto;
+	max-height: 200px;
+	float:center;
+}
 /*Drag and drop test*/
 #outer-dropzone {
   height: 140px;
@@ -60,11 +84,9 @@
 .drag-drop {
   display: inline-block;
   min-width: 40px;
-  padding: 2em 0.5em;
+ 
 
   color: #fff;
-  background-color: #29e;
-  border: solid 2px #fff;
 
   -webkit-transform: translate(0px, 0px);
           transform: translate(0px, 0px);
@@ -76,3 +98,71 @@
   color: #000;
   background-color: #4e4;
 }
+
+.card {
+  height: 30%;
+  width: 30%;
+}
+
+.header-logo{
+	width:25px;
+	height: 25px;
+	float:left;
+	margin-top: 8px;
+	margin-right:2px;
+}
+
+.header-title{
+	float: left;
+}
+
+.item-thumbnail-create{
+	border:none;
+	background-color: #FFFFFF;
+	width:11em;
+	height:14em;
+	float:left;
+}
+
+.item-thumbnail-create img{
+	width: 80%;
+	height: 80%;
+	margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.tally-logo {
+	margin-top: 0.4em;
+	vertical-align: center;
+	width:60px;
+	height:32px;
+}
+
+.login-background {
+	width: 100%;
+	height: 100%;
+	/*background-color: #C92228;*/
+	background-image: url("../img//tally-wordmark-gray.png");
+	background-size: 20% 10%;
+	background-position: 50% 70%;
+	background-repeat: no-repeat;
+}
+
+/*.login-form {
+	/*background-color: red;*/
+	/*position: fixed;
+	top: 10%;
+	/*bottom: 35%;*/
+	/*right: 10%;
+	left: 10%
+}*/
+
+/*.sign-up{
+	position: fixed;
+	width: 300px;
+	left: 50%;
+	margin-left: -75px;*/
+	/*right: 35%;*/
+	/*top: 38%;*/
+/*}*/
