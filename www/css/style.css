@@ -167,6 +167,9 @@
 	background-repeat: no-repeat;
 }
 
+.errorInfo {
+	color: red;
+}
 /*.login-form {
 	/*background-color: red;*/
 	/*position: fixed;
