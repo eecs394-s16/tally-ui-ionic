@@ -54,7 +54,7 @@
 }
 
 .item-thumbnail-col img{
-	width: 4em;
+	width: 50%;
 	height: 4em;
 	margin-left: auto;
     margin-right: auto;
@@ -167,9 +167,16 @@
 	background-repeat: no-repeat;
 }
 
+
 .errorInfo {
 	color: red;
 }
+
+.holding {
+	box-shadow: 10px 10px grey;
+}
+
+
 /*.login-form {
 	/*background-color: red;*/
 	/*position: fixed;
