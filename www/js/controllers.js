@@ -140,7 +140,7 @@ angular.module('starter.controllers', [])
       // enable autoScroll
       autoScroll: true,
       // call this function on every dragmove event
-      
+
       onmove: dragMoveListener,
       // call this function on every dragend event
       onend: function (event) {
@@ -386,6 +386,7 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doImport = function(idx) {
     //console.log('Doing Import', $scope.importData);
+    $scope.loading=true;
     console.log(idx);
     console.log($scope.boards[idx]);
 
@@ -408,6 +409,8 @@ angular.module('starter.controllers', [])
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
+    }).finally(function(){
+      $scope.loading = false;
     });
   };
 
@@ -429,6 +432,7 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doImport2 = function() {
     console.log('Doing Import', $scope.importData);
+    $scope.loading = true;
 
     //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
@@ -451,12 +455,15 @@ angular.module('starter.controllers', [])
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
+    }).finally(function(){
+      $scope.loading = false;
     });
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").error(function(response){
+      $scope.loading = false;
       $scope.errorInfo = "Username or BoardName Not Correct";
       console.log("afd");
     //  alert("Username ");
-   });
+    });
   };
 
   //TODO: shouldn't need this anymore
