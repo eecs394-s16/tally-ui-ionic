@@ -132,6 +132,10 @@
 
 .header-title{
 	float: left;
+	width: 85px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .item-thumbnail-create{

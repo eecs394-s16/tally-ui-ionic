@@ -1,12 +1,16 @@
-<ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>&nbsp{{ collection.name }}<h3>'>
-
+<!-- <ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>&nbsp{{ collection.name }}<h3>'> -->
+<ion-view>
+	<ion-nav-title>
+		<img class = "header-logo" src="../img/tally-logo-white.png"></img>
+		<h4 class="header-title">&nbsp{{collection.name}}</h4>
+	</ion-nav-title>
 	 <ion-nav-buttons side="secondary">
       <button class="button" ng-click="showCollectionEdit()">
         Edit
       </button>
-      <button class="button" ng-click="reload()">
+      <!-- <button class="button" ng-click="reload()">
         Reload
-      </button>
+      </button> -->
     </ion-nav-buttons>
 
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
@@ -21,14 +25,12 @@
           </a>
           <div class = "price-tag">
             <h2 class = "price">${{ item.price }}</h2>
-            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()">Tally</ion-toggle> 
+            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()">Tally</ion-toggle>
           </div>
         </ion-item>
 
 
 
-    <button class="button button-full button-positive" ng-click="import()">
-    		import a board
-  	</button>
+
     </ion-content>
 </ion-view>
