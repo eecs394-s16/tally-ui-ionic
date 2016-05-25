@@ -348,15 +348,37 @@ angular.module('starter.controllers', [])
       detectedCurrency = priceMatch[0].substring(0, 1);
       priceValue = Number(priceMatch[1]);
     } else {
-        detectedCurrency = "$";
-        priceValue = 0.0;
+        detectedCurrency = false;
+        priceValue = false;
     }
-
-    // TODO: Convert currency from detected to US dollars
-    detectedCurrency = "$";
 
     angular.extend(item, {price: priceValue, toggle: false});
     return item;
+  };
+
+  $scope.hasPrice = function(item) {
+
+    if (item.price) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  $scope.formatPrice = function(item) {
+
+    var priceStr;
+
+    // TODO: get this value from the actual detected currency
+    var detectedCurrency = "$";
+
+    if (!item.price) {
+      priceStr = " ";
+    } else {
+      priceStr = detectedCurrency + " " + item.price;
+    }
+
+    return priceStr;
   };
 
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
