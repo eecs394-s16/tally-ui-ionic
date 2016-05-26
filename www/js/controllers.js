@@ -63,6 +63,39 @@ angular.module('starter.controllers', [])
 
   console.log($scope.items);
 
+  curr_left_pos = 0;
+  curr_right_pos = 0;
+  curr_left = true;
+  for (var key in $scope.items) {
+    console.log($scope.items[key]);
+    var img = new Image();
+    img.src = $scope.items[key].image.original.url;
+    img.onload = function() {
+      console.log(this.width + " width|height " + this.height);
+      var y_ratio = Math.round((this.height*1.0)/100);
+      angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
+      if (curr_left) {
+        angular.extend($scope.items[key], {position: [0, curr_left_pos]});
+        curr_left_pos +=y_ratio;
+      } else {
+        angular.extend($scope.items[key], {position: [1, curr_right_pos]});
+        curr_right_pos += y_ratio;
+      }
+      curr_left = !curr_left;
+      console.log($scope.items[key].size_y);
+      console.log($scope.items[key]);
+      console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos)
+    };
+  }
+
+  $scope.customItemMap = {
+      sizeX: '1',
+      sizeY: 'item.size_y',
+      minSizeY: 'item.size_y',
+      maxSizeY: 'item.size_y'
+  };
+
+
   $scope.collection = CollectionService.getCollection($scope.collectionId);
 
   $scope.calculateSum = function() {

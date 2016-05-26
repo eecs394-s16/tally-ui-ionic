@@ -20,7 +20,7 @@
       <ion-content id = "collection-items" scroll = "true" data-tap-disabled = "false" class="has-header has-subheader">
       <div gridster = "gridsterOpts">
         <ul>
-        <li gridster-item id = "item-cards"  ng-repeat="item in items"
+        <li gridster-item id = "item-cards" size-x="item.size_x" size-y="5" ng-repeat="item in items"
                   class="draggable drag-drop">
           <a href="#/app/collection/{{collectionId}}/{{item.id}}">
             <img ng-src="{{ item.image.original.url }}">
