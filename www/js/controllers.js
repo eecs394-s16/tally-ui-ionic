@@ -72,7 +72,7 @@ angular.module('starter.controllers', [])
     img.src = $scope.items[key].image.original.url;
     img.onload = function() {
       console.log(this.width + " width|height " + this.height);
-      var y_ratio = Math.round((this.height*1.0)/100);
+      var y_ratio = Math.round((this.height*1.0)/10);
       // $scope.items[key].size.y = y_ratio
       // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
       // angular.extend($scope.items[key], {size: {x: 40, y: 20}});
@@ -242,15 +242,15 @@ angular.module('starter.controllers', [])
     swapping: false, // whether or not to have items of the same size switch places instead of pushing down if they are the same size
     width: 'auto', // can be an integer or 'auto'. 'auto' scales gridster to be the full width of its containing element
     colWidth: 'auto', // can be an integer or 'auto'.  'auto' uses the pixel width of the element divided by 'columns'
-   rowHeight: 'match', // can be an integer or 'match'.  Match uses the colWidth, giving you square widgets.
-    margins: [0, 0], // the pixel distance between each widget
+    rowHeight: '31', // can be an integer or 'match'.  Match uses the colWidth, giving you square widgets.
+    margins: [10, 10], // the pixel distance between each widget
     outerMargin: true, // whether margins apply to outer edges of the grid
     isMobile: false, // stacks the grid items if true
-    mobileBreakPoint: 600, // if the screen is not wider that this, remove the grid layout and stack the items
+    mobileBreakPoint: 100, // if the screen is not wider that this, remove the grid layout and stack the items
     mobileModeEnabled: false, // whether or not to toggle mobile mode when screen width is less than mobileBreakPoint
     minColumns: 1, // the minimum columns the grid must have
-    minRows: 2, // the minimum height of the grid, in rows
-    maxRows: 100,
+    minRows: 1, // the minimum height of the grid, in rows
+    maxRows: 100000,
     defaultSizeX: 1, // the default width of a gridster item, if not specifed
     defaultSizeY: 1, // the default height of a gridster item, if not specified
     minSizeX: 1, // minimum column width of an item
@@ -258,7 +258,7 @@ angular.module('starter.controllers', [])
     minSizeY: 1, // minumum row height of an item
     maxSizeY: null, // maximum row height of an item
     resizable: {
-       enabled: true,
+       enabled: false,
        handles: ['n', 'e', 's', 'w', 'ne', 'se', 'sw', 'nw'],
        start: function(event, $element, widget) {}, // optional callback fired when resize is started,
        resize: function(event, $element, widget) {}, // optional callback fired when item is resized,
@@ -403,8 +403,13 @@ angular.module('starter.controllers', [])
     var height = item.image.original.height;
     var width = item.image.original.width;
 
-    height = Math.ceil(((height + 24) * 1.0)/width);
-    // width = (width * 1.0)/100;
+ 
+    
+    if (item.price != false) {
+      height = Math.round(((height) * 6.0)/width) + 2;
+    } else {
+      height = Math.ceil(((height) * 6.0)/width);
+    }
     console.log("height: " + height);
 
     angular.extend(item, {size: {x: 1, y: height}});
@@ -431,7 +436,7 @@ angular.module('starter.controllers', [])
     if (!item.price) {
       priceStr = " ";
     } else {
-      priceStr = detectedCurrency + " " + item.price;
+      priceStr = detectedCurrency + " " + Math.round(item.price);
     }
 
     return priceStr;

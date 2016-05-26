@@ -29,7 +29,7 @@
             <img ng-src="{{ item.image.original.url }}">
           </a>
           <div class = "price-tag">
-            <h2 class = "price">{{ formatPrice(item) }}</h2>
+            <h5 class = "price">{{ formatPrice(item) }}</h5>
             <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()" ng-show="hasPrice(item)">Tally</ion-toggle>
           </div>
        </li>  
