@@ -145,5 +145,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'gridster'])
 
   // $urlRouterProvider.otherwise('/app/search');
 // ======
-  $urlRouterProvider.otherwise('/app/collection');
+  $urlRouterProvider.otherwise('/app/login');
 });

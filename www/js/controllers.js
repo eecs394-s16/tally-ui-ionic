@@ -73,7 +73,10 @@ angular.module('starter.controllers', [])
     img.onload = function() {
       console.log(this.width + " width|height " + this.height);
       var y_ratio = Math.round((this.height*1.0)/100);
-      angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
+      // $scope.items[key].size.y = y_ratio
+      // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
+      // angular.extend($scope.items[key], {size: {x: 40, y: 20}});
+      
       if (curr_left) {
         angular.extend($scope.items[key], {position: [0, curr_left_pos]});
         curr_left_pos +=y_ratio;
@@ -81,11 +84,14 @@ angular.module('starter.controllers', [])
         angular.extend($scope.items[key], {position: [1, curr_right_pos]});
         curr_right_pos += y_ratio;
       }
+
       curr_left = !curr_left;
-      console.log($scope.items[key].size_y);
+      console.log($scope.items[key].size.y);
       console.log($scope.items[key]);
-      console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos)
+      console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos);
     };
+
+      console.log("size.x: " + $scope.items[key].size.x + " | size.y: " + $scope.items[key].size.y);
   }
 
   $scope.customItemMap = {
@@ -396,6 +402,19 @@ angular.module('starter.controllers', [])
     return item;
   };
 
+  $scope.setSize = function(item) {
+    var height = item.image.original.height;
+    var width = item.image.original.width;
+
+    height = (height * 1.0)/width;
+    // width = (width * 1.0)/100;
+    console.log("height: " + height);
+
+    angular.extend(item, {size: {x: 1, y: height}});
+    console.log("set height in set size: " + item.size.y);
+    return item;
+  };
+
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
     scope: $scope
   }).then(function(modal) {
@@ -434,6 +453,8 @@ angular.module('starter.controllers', [])
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
           currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
+          console.log("after setSize " + currentItem.size.y);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport();
