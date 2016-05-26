@@ -63,6 +63,45 @@ angular.module('starter.controllers', [])
 
   console.log($scope.items);
 
+  curr_left_pos = 0;
+  curr_right_pos = 0;
+  curr_left = true;
+  for (var key in $scope.items) {
+    console.log($scope.items[key]);
+    var img = new Image();
+    img.src = $scope.items[key].image.original.url;
+    img.onload = function() {
+      console.log(this.width + " width|height " + this.height);
+      var y_ratio = Math.round((this.height*1.0)/10);
+      // $scope.items[key].size.y = y_ratio
+      // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
+      // angular.extend($scope.items[key], {size: {x: 40, y: 20}});
+      
+      if (curr_left) {
+        angular.extend($scope.items[key], {position: [0, curr_left_pos]});
+        curr_left_pos +=y_ratio;
+      } else {
+        angular.extend($scope.items[key], {position: [1, curr_right_pos]});
+        curr_right_pos += y_ratio;
+      }
+
+      curr_left = !curr_left;
+      console.log($scope.items[key].size.y);
+      console.log($scope.items[key]);
+      console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos);
+    };
+
+      console.log("size.x: " + $scope.items[key].size.x + " | size.y: " + $scope.items[key].size.y);
+  }
+
+  $scope.customItemMap = {
+      sizeX: '1',
+      sizeY: 'item.size_y',
+      minSizeY: 'item.size_y',
+      maxSizeY: 'item.size_y'
+  };
+
+
   $scope.collection = CollectionService.getCollection($scope.collectionId);
 
   $scope.calculateSum = function() {
@@ -194,34 +233,38 @@ angular.module('starter.controllers', [])
 
       // listen for drop related events:
 
-      ondropactivate: function (event) {
-        // add active dropzone feedback
-        event.target.classList.add('drop-active');
-      },
-      ondragenter: function (event) {
-        var draggableElement = event.relatedTarget,
-            dropzoneElement = event.target;
-
-        // feedback the possibility of a drop
-        dropzoneElement.classList.add('drop-target');
-        draggableElement.classList.add('can-drop');
-        draggableElement.textContent = 'Dragged in';
-      },
-      ondragleave: function (event) {
-        // remove the drop feedback style
-        event.target.classList.remove('drop-target');
-        event.relatedTarget.classList.remove('can-drop');
-        event.relatedTarget.textContent = 'Dragged out';
-      },
-      ondrop: function (event) {
-        event.relatedTarget.textContent = 'Dropped';
-      },
-      ondropdeactivate: function (event) {
-        // remove active dropzone feedback
-        event.target.classList.remove('drop-active');
-        event.target.classList.remove('drop-target');
-      }
     });
+
+    $scope.gridsterOpts = {
+    columns:2,// the width of the grid, in columns
+    pushing: true, // whether to push other items out of the way on move or resize
+    floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
+    swapping: false, // whether or not to have items of the same size switch places instead of pushing down if they are the same size
+    width: 'auto', // can be an integer or 'auto'. 'auto' scales gridster to be the full width of its containing element
+    colWidth: 'auto', // can be an integer or 'auto'.  'auto' uses the pixel width of the element divided by 'columns'
+    rowHeight: '31', // can be an integer or 'match'.  Match uses the colWidth, giving you square widgets.
+    margins: [10, 10], // the pixel distance between each widget
+    outerMargin: true, // whether margins apply to outer edges of the grid
+    isMobile: false, // stacks the grid items if true
+    mobileBreakPoint: 100, // if the screen is not wider that this, remove the grid layout and stack the items
+    mobileModeEnabled: false, // whether or not to toggle mobile mode when screen width is less than mobileBreakPoint
+    minColumns: 1, // the minimum columns the grid must have
+    minRows: 1, // the minimum height of the grid, in rows
+    maxRows: 100000,
+    defaultSizeX: 1, // the default width of a gridster item, if not specifed
+    defaultSizeY: 1, // the default height of a gridster item, if not specified
+    minSizeX: 1, // minimum column width of an item
+    maxSizeX: null, // maximum column width of an item
+    minSizeY: 1, // minumum row height of an item
+    maxSizeY: null, // maximum row height of an item
+    resizable: {
+       enabled: false,
+       handles: ['n', 'e', 's', 'w', 'ne', 'se', 'sw', 'nw'],
+       start: function(event, $element, widget) {}, // optional callback fired when resize is started,
+       resize: function(event, $element, widget) {}, // optional callback fired when item is resized,
+       stop: function(event, $element, widget) {} // optional callback fired when item is finished resizing
+    }
+};
 
     window.dragMoveListener = dragMoveListener;
 
@@ -356,6 +399,24 @@ angular.module('starter.controllers', [])
     return item;
   };
 
+  $scope.setSize = function(item) {
+    var height = item.image.original.height;
+    var width = item.image.original.width;
+
+ 
+    
+    if (item.price != false) {
+      height = Math.round(((height) * 6.0)/width) + 2;
+    } else {
+      height = Math.ceil(((height) * 6.0)/width);
+    }
+    console.log("height: " + height);
+
+    angular.extend(item, {size: {x: 1, y: height}});
+    console.log("set height in set size: " + item.size.y);
+    return item;
+  };
+
   $scope.hasPrice = function(item) {
 
     if (item.price) {
@@ -375,7 +436,7 @@ angular.module('starter.controllers', [])
     if (!item.price) {
       priceStr = " ";
     } else {
-      priceStr = detectedCurrency + " " + item.price;
+      priceStr = detectedCurrency + " " + Math.round(item.price);
     }
 
     return priceStr;
@@ -419,6 +480,8 @@ angular.module('starter.controllers', [])
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
           currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
+          console.log("after setSize " + currentItem.size.y);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport();
@@ -464,6 +527,7 @@ angular.module('starter.controllers', [])
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
           currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.errorInfo = "";
