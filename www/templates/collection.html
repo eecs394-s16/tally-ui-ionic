@@ -18,8 +18,10 @@
       </ion-header-bar>
 
       <ion-content id = "collection-items" scroll = "true" data-tap-disabled = "false" class="has-header has-subheader">
-        <ion-item id = "item-cards" " ng-repeat="item in items" ng-class="{'holding': $scope.holding}"
-                  class="item-thumbnail-top draggable drag-drop">
+      <div gridster = "gridsterOpts">
+        <ul>
+        <li gridster-item id = "item-cards"  ng-repeat="item in items"
+                  class="draggable drag-drop">
           <a href="#/app/collection/{{collectionId}}/{{item.id}}">
             <img ng-src="{{ item.image.original.url }}">
           </a>
@@ -27,8 +29,9 @@
             <h2 class = "price">${{ item.price }}</h2>
             <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()">Tally</ion-toggle>
           </div>
-        </ion-item>
-
+        </li>
+      </ul>
+      </div>
 
 
 
