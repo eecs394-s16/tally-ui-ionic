@@ -391,12 +391,9 @@ angular.module('starter.controllers', [])
       detectedCurrency = priceMatch[0].substring(0, 1);
       priceValue = Number(priceMatch[1]);
     } else {
-        detectedCurrency = "$";
-        priceValue = 0.0;
+        detectedCurrency = false;
+        priceValue = false;
     }
-
-    // TODO: Convert currency from detected to US dollars
-    detectedCurrency = "$";
 
     angular.extend(item, {price: priceValue, toggle: false});
     return item;
@@ -406,13 +403,38 @@ angular.module('starter.controllers', [])
     var height = item.image.original.height;
     var width = item.image.original.width;
 
-    height = (height * 1.0)/width;
+    height = Math.ceil(((height + 24) * 1.0)/width);
     // width = (width * 1.0)/100;
     console.log("height: " + height);
 
     angular.extend(item, {size: {x: 1, y: height}});
     console.log("set height in set size: " + item.size.y);
     return item;
+  };
+
+  $scope.hasPrice = function(item) {
+
+    if (item.price) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  $scope.formatPrice = function(item) {
+
+    var priceStr;
+
+    // TODO: get this value from the actual detected currency
+    var detectedCurrency = "$";
+
+    if (!item.price) {
+      priceStr = " ";
+    } else {
+      priceStr = detectedCurrency + " " + item.price;
+    }
+
+    return priceStr;
   };
 
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
@@ -500,6 +522,7 @@ angular.module('starter.controllers', [])
         for(i=0;i< $scope.items.length;i++){
           currentItem = $scope.items[i];
           currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
           ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.errorInfo = "";
