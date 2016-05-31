@@ -1,33 +1,44 @@
-<ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>&nbsp{{ collection.name }}<h3>'>
-
+<!-- <ion-view view-title='<img class = "header-logo" src = "../img/tally-logo-white.png"></img><h4 class = header-title>&nbsp{{ collection.name }}<h3>'> -->
+<ion-view>
+	<ion-nav-title>
+		<img class = "header-logo" src="../img/tally-logo-white.png"></img>
+		<h4 class="header-title">&nbsp{{collection.name}}</h4>
+	</ion-nav-title>
 	 <ion-nav-buttons side="secondary">
       <button class="button" ng-click="showCollectionEdit()">
         Edit
       </button>
-      <button class="button" ng-click="reload()">
+      <!-- <button class="button" ng-click="reload()">
         Reload
-      </button>
+      </button> -->
     </ion-nav-buttons>
-    
+
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
-        <h1 class="title">My Collection</h1>
+        <h1 class="title">${{ totalPrice }}</h1>
       </ion-header-bar>
 
-      <ion-content id = "collection-items" class="has-header has-subheader">
+      <ion-content id = "collection-items" scroll = "true" data-tap-disabled = "false" class="has-header has-subheader">
+      <div gridster = "gridsterOpts">
+        <ul>
+<!--         <li gridster-item id = "item-cards" size-x="item.size_x" size-y="5" ng-repeat="item in items"
+                  class="draggable drag-drop"> -->
+        <div ng-repeat="item in items">
+          <!-- class="item-thumbnail-top" -->
+        <li gridster-item id = "item-cards" size-x="item.size.x" size-y="item.size.y" class="draggable drag-drop">  
+          <a href="#/app/collection/{{collectionId}}/{{item.id}}">
+            <img ng-src="{{ item.image.original.url }}">
+          </a>
+          <div class = "price-tag">
+            <h5 class = "price">{{ formatPrice(item) }}</h5>
+            <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()" ng-show="hasPrice(item)">Tally</ion-toggle>
+          </div>
+       </li>  
+      
+      </div>
+      </ul>
+      </div>
 
-        <ion-item ng-repeat="item in items"
-                  href="#/app/collection/{{collectionId}}/{{item.id}}"
-                  class="item-thumbnail-top draggable drag-drop">
 
-          <img ng-src="{{ item.image.original.url }}">
-          <h2>{{ item.note }}</h2>
-        </ion-item>
-
-
-
-    <button class="button button-full button-positive" ng-click="import()">
-    		import a board
-  	</button>
 
     </ion-content>
 </ion-view>
