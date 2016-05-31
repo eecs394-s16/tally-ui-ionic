@@ -9,9 +9,12 @@
         Edit
       </button>
 <!--       <input type="button" ng-click="gridsterOpts.draggable.enabled = !gridsterOpts.draggable.enabled" value="{{gridsterOpts.draggable.enabled ? 'Disable' : 'Enable' }} Draggability" /> -->
-    <button class="button" ng-click="gridsterOpts.draggable.enabled = !gridsterOpts.draggable.enabled">
+ <!--    <button class="button" ng-click="toggleDraggable()">
       Toggle Draggability
-    </button>
+    </button> -->
+      <button ng-class="{'danger': !isShortActionDone, 'success': isShortActionDone}" hold-button="onHoldShortStart($event, $promise)" hold-button-delay="400">
+        Toggle Draggability (Hold)
+      </button>
     </ion-nav-buttons>
 
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">

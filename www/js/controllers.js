@@ -141,8 +141,6 @@ angular.module('starter.controllers', [])
 
   $scope.holding = false;
 
-
-
   // console.log($scope.importData)
 
     $scope.data = {
@@ -165,45 +163,6 @@ angular.module('starter.controllers', [])
       $scope.items.splice(toIndex, 0, item);
     };
 
-      // target elements with the "draggable" class
-  interact('.draggable')
-    .draggable({
-      // enable inertial throwing
-      inertia: false,
-      // keep the element within the area of it's parent
-      restrict: {
-        restriction: "parent",
-        endOnly: true,
-        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-      },
-      // enable autoScroll
-      autoScroll: true,
-      // call this function on every dragmove event
-
-      onmove: dragMoveListener,
-      // call this function on every dragend event
-      onend: function (event) {
-        if ($scope.holding) {
-          $scope.holding = false;
-        } else {
-          var textEl = event.target.querySelector('p');
-          $ionicScrollDelegate.freezeScroll(false);
-
-          textEl && (textEl.textContent =
-            'moved a distance of '
-            + (Math.sqrt(event.dx * event.dx +
-                         event.dy * event.dy)|0) + 'px');
-        }
-      }
-    })
-    .on('hold', function (event) {
-      $scope.holding = true;
-
-      // TODO: holding css change animation
-    });
-
-
-
     function dragMoveListener (event) {
       if ($scope.holding) {
         $ionicScrollDelegate.freezeScroll(true);
@@ -221,19 +180,7 @@ angular.module('starter.controllers', [])
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
       }
-    }
-
-    // this is used later in the resizing and gesture demos
-
-    interact('.dropzone').dropzone({
-      // only accept elements matching this CSS selector
-      accept: '#yes-drop',
-      // Require a 75% element overlap for a drop to be possible
-      overlap: 0.75,
-
-      // listen for drop related events:
-
-    });
+    };
 
     $scope.gridsterOpts = {
     draggable: {
@@ -273,6 +220,27 @@ angular.module('starter.controllers', [])
 $scope.toggleDraggable = function() {
   $scope.gridsterOpts.draggable.enabled = !$scope.gridsterOpts.draggable.enabled;
   return;
+};
+
+////////////////////////////
+//  NOAH: Push and Hold  //
+////////////////////////////
+$scope.isShortActionDone = false;
+$scope.onHoldShortStart = function($event, $promise) {
+
+  $promise.then(function(success){
+    // Called if the button was held long enough
+    console.log("NOAH Success! Hold was successful");
+    $scope.toggleDraggable();
+    $scope.isShortActionDone = !$scope.isShortActionDone;
+  }, function(reason){
+    // Called if the button is not held long enough
+    console.log("NOAH button was not held down for long enough");
+  }, function(update){
+
+    // Called multiple times before the promise is confirmed or rejected
+    console.log("NOAH Keep holding. update.");
+  })
 };
 
     window.dragMoveListener = dragMoveListener;
@@ -852,6 +820,57 @@ $scope.toggleDraggable = function() {
      return this.token;
    }
  }
+})
+
+.directive('holdButton', function($parse, $q, $interval){
+  return {
+    restrict: 'A',
+    priority: 10,
+    link: function postLink(scope, element, attrs) {
+      
+      var tickDelay = 10;
+
+      var deferred, stop;
+      element.on('mousedown', function($event) {
+
+        var onHoldStart = $parse(attrs.holdButton);
+        var holdDelay = attrs.holdButtonDelay ? ($parse(attrs.holdButtonDelay)(scope) || 400) : 400;
+        var counter = 0;
+        var nbTick = holdDelay / tickDelay;
+        deferred = $q.defer();
+
+        // Call onTick fxn 'nbTick' times every 'tickDelay' ms
+        // stop is stopper fxn
+        stop = $interval(onTick, tickDelay, nbTick);
+        function onTick() {
+          counter++;
+          deferred.notify((counter + 1) / nbTick);
+          if (counter === nbTick) {
+            deferred.resolve();
+          }
+        }
+
+        if (typeof onHoldStart == 'function' || false) {
+
+          onHoldStart(scope, {
+            $promise: deferred.promise,
+            $event: $event
+          });
+        }
+
+      });
+      element.on('mouseup', function($event) {
+        $event.stopPropagation();
+        $interval.cancel(stop);
+
+        if (deferred) {
+          deferred.reject($event);
+        }
+      });
+
+    }
+  };
+
 })
 
 
