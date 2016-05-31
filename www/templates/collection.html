@@ -8,9 +8,10 @@
       <button class="button" ng-click="showCollectionEdit()">
         Edit
       </button>
-      <!-- <button class="button" ng-click="reload()">
-        Reload
-      </button> -->
+<!--       <input type="button" ng-click="gridsterOpts.draggable.enabled = !gridsterOpts.draggable.enabled" value="{{gridsterOpts.draggable.enabled ? 'Disable' : 'Enable' }} Draggability" /> -->
+    <button class="button" ng-click="gridsterOpts.draggable.enabled = !gridsterOpts.draggable.enabled">
+      Toggle Draggability
+    </button>
     </ion-nav-buttons>
 
       <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">

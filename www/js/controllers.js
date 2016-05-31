@@ -71,7 +71,6 @@ angular.module('starter.controllers', [])
     var img = new Image();
     img.src = $scope.items[key].image.original.url;
     img.onload = function() {
-      console.log(this.width + " width|height " + this.height);
       var y_ratio = Math.round((this.height*1.0)/10);
       // $scope.items[key].size.y = y_ratio
       // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
@@ -86,6 +85,7 @@ angular.module('starter.controllers', [])
       }
 
       curr_left = !curr_left;
+      console.log("NOAH DOC scope.items[key].size.y, scope.items[key]");
       console.log($scope.items[key].size.y);
       console.log($scope.items[key]);
       console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos);
@@ -236,10 +236,13 @@ angular.module('starter.controllers', [])
     });
 
     $scope.gridsterOpts = {
+    draggable: {
+      enabled: false
+    },
     columns:2,// the width of the grid, in columns
     pushing: true, // whether to push other items out of the way on move or resize
     floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
-    swapping: false, // whether or not to have items of the same size switch places instead of pushing down if they are the same size
+    swapping: true, // whether or not to have items of the same size switch places instead of pushing down if they are the same size
     width: 'auto', // can be an integer or 'auto'. 'auto' scales gridster to be the full width of its containing element
     colWidth: 'auto', // can be an integer or 'auto'.  'auto' uses the pixel width of the element divided by 'columns'
     rowHeight: '31', // can be an integer or 'match'.  Match uses the colWidth, giving you square widgets.
@@ -264,6 +267,12 @@ angular.module('starter.controllers', [])
        resize: function(event, $element, widget) {}, // optional callback fired when item is resized,
        stop: function(event, $element, widget) {} // optional callback fired when item is finished resizing
     }
+};
+
+// NOAH
+$scope.toggleDraggable = function() {
+  $scope.gridsterOpts.draggable.enabled = !$scope.gridsterOpts.draggable.enabled;
+  return;
 };
 
     window.dragMoveListener = dragMoveListener;
