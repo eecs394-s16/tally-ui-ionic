@@ -164,6 +164,7 @@ angular.module('starter.controllers', [])
     };
 
     function dragMoveListener (event) {
+      console.log("NOAH WE ARE HERE");
       if ($scope.holding) {
         $ionicScrollDelegate.freezeScroll(true);
         var target = event.target,
@@ -228,19 +229,30 @@ $scope.toggleDraggable = function() {
 $scope.isShortActionDone = false;
 $scope.onHoldShortStart = function($event, $promise) {
 
-  $promise.then(function(success){
-    // Called if the button was held long enough
-    console.log("NOAH Success! Hold was successful");
-    $scope.toggleDraggable();
-    $scope.isShortActionDone = !$scope.isShortActionDone;
-  }, function(reason){
-    // Called if the button is not held long enough
-    console.log("NOAH button was not held down for long enough");
-  }, function(update){
+  if (!$scope.gridsterOpts.draggable.enabled) {
+    $promise.then(function(success){
+      // Called if the button was held long enough
+      console.log("NOAH Success! Hold was successful");
+      $scope.isShortActionDone = !$scope.isShortActionDone;
+      $event.stopPropagation();
 
-    // Called multiple times before the promise is confirmed or rejected
-    console.log("NOAH Keep holding. update.");
-  })
+      $scope.toggleDraggable();
+
+    }, function(reason){
+      // Called if the button is not held long enough
+      console.log("NOAH button was not held down for long enough");
+    }, function(update){
+
+      // Called multiple times before the promise is confirmed or rejected
+      console.log("NOAH Keep holding. update.");
+    })
+  } else {
+
+    console.log("NOAH dont handle push and hold");
+    $event.stopPropagation();
+    return;
+  }
+
 };
 
     window.dragMoveListener = dragMoveListener;
@@ -357,6 +369,7 @@ $scope.onHoldShortStart = function($event, $promise) {
   $scope.setPrice = function(item) {
 
     var priceMatch = false;
+    var priceToggle = false;
     if (item.metadata.hasOwnProperty('product')){
       priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
     } else {
@@ -367,12 +380,14 @@ $scope.onHoldShortStart = function($event, $promise) {
     if (priceMatch) {
       detectedCurrency = priceMatch[0].substring(0, 1);
       priceValue = Number(priceMatch[1]);
+      priceToggle = true;
     } else {
         detectedCurrency = false;
         priceValue = false;
     }
 
-    angular.extend(item, {price: priceValue, toggle: false});
+    // angular.extend(item, {price: priceValue, toggle: false});
+    angular.extend(item, {price: priceValue, toggle: priceToggle});
     return item;
   };
 
@@ -602,92 +617,92 @@ $scope.onHoldShortStart = function($event, $promise) {
   }
 })
 
-.controller('InteractCtrl', function($scope){
-  // target elements with the "draggable" class
-  interact('.draggable')
-    .draggable({
-      // enable inertial throwing
-      inertia: true,
-      // keep the element within the area of it's parent
-      restrict: {
-        restriction: "parent",
-        endOnly: true,
-        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-      },
-      // enable autoScroll
-      autoScroll: true,
+// .controller('InteractCtrl', function($scope){
+//   // target elements with the "draggable" class
+//   interact('.draggable')
+//     .draggable({
+//       // enable inertial throwing
+//       inertia: true,
+//       // keep the element within the area of it's parent
+//       restrict: {
+//         restriction: "parent",
+//         endOnly: true,
+//         elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+//       },
+//       // enable autoScroll
+//       autoScroll: true,
 
-      // call this function on every dragmove event
-      onmove: dragMoveListener,
-      // call this function on every dragend event
-      onend: function (event) {
-        var textEl = event.target.querySelector('p');
+//       // call this function on every dragmove event
+//       onmove: dragMoveListener,
+//       // call this function on every dragend event
+//       onend: function (event) {
+//         var textEl = event.target.querySelector('p');
 
-        textEl && (textEl.textContent =
-          'moved a distance of '
-          + (Math.sqrt(event.dx * event.dx +
-                       event.dy * event.dy)|0) + 'px');
-      }
-    });
+//         textEl && (textEl.textContent =
+//           'moved a distance of '
+//           + (Math.sqrt(event.dx * event.dx +
+//                        event.dy * event.dy)|0) + 'px');
+//       }
+//     });
 
-    function dragMoveListener (event) {
-      var target = event.target,
-          // keep the dragged position in the data-x/data-y attributes
-          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+//     function dragMoveListener (event) {
+//       var target = event.target,
+//           // keep the dragged position in the data-x/data-y attributes
+//           x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+//           y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-      // translate the element
-      target.style.webkitTransform =
-      target.style.transform =
-        'translate(' + x + 'px, ' + y + 'px)';
+//       // translate the element
+//       target.style.webkitTransform =
+//       target.style.transform =
+//         'translate(' + x + 'px, ' + y + 'px)';
 
-      // update the posiion attributes
-      target.setAttribute('data-x', x);
-      target.setAttribute('data-y', y);
-    }
+//       // update the posiion attributes
+//       target.setAttribute('data-x', x);
+//       target.setAttribute('data-y', y);
+//     }
 
-    // this is used later in the resizing and gesture demos
+//     // this is used later in the resizing and gesture demos
 
-    interact('.dropzone').dropzone({
-      // only accept elements matching this CSS selector
-      accept: '#yes-drop',
-      // Require a 75% element overlap for a drop to be possible
-      overlap: 0.75,
+//     interact('.dropzone').dropzone({
+//       // only accept elements matching this CSS selector
+//       accept: '#yes-drop',
+//       // Require a 75% element overlap for a drop to be possible
+//       overlap: 0.75,
 
-      // listen for drop related events:
+//       // listen for drop related events:
 
-      ondropactivate: function (event) {
-        // add active dropzone feedback
-        event.target.classList.add('drop-active');
-      },
-      ondragenter: function (event) {
-        var draggableElement = event.relatedTarget,
-            dropzoneElement = event.target;
+//       ondropactivate: function (event) {
+//         // add active dropzone feedback
+//         event.target.classList.add('drop-active');
+//       },
+//       ondragenter: function (event) {
+//         var draggableElement = event.relatedTarget,
+//             dropzoneElement = event.target;
 
-        // feedback the possibility of a drop
-        dropzoneElement.classList.add('drop-target');
-        draggableElement.classList.add('can-drop');
-        draggableElement.textContent = 'Dragged in';
-      },
-      ondragleave: function (event) {
-        // remove the drop feedback style
-        event.target.classList.remove('drop-target');
-        event.relatedTarget.classList.remove('can-drop');
-        event.relatedTarget.textContent = 'Dragged out';
-      },
-      ondrop: function (event) {
-        event.relatedTarget.textContent = 'Dropped';
-      },
-      ondropdeactivate: function (event) {
-        // remove active dropzone feedback
-        event.target.classList.remove('drop-active');
-        event.target.classList.remove('drop-target');
-      }
-    });
+//         // feedback the possibility of a drop
+//         dropzoneElement.classList.add('drop-target');
+//         draggableElement.classList.add('can-drop');
+//         draggableElement.textContent = 'Dragged in';
+//       },
+//       ondragleave: function (event) {
+//         // remove the drop feedback style
+//         event.target.classList.remove('drop-target');
+//         event.relatedTarget.classList.remove('can-drop');
+//         event.relatedTarget.textContent = 'Dragged out';
+//       },
+//       ondrop: function (event) {
+//         event.relatedTarget.textContent = 'Dropped';
+//       },
+//       ondropdeactivate: function (event) {
+//         // remove active dropzone feedback
+//         event.target.classList.remove('drop-active');
+//         event.target.classList.remove('drop-target');
+//       }
+//     });
 
-    window.dragMoveListener = dragMoveListener;
+//     window.dragMoveListener = dragMoveListener;
 
-})
+// })
 /*
   items is a map with keys collectionId
   each value of items[collectionId] is a map with keys itemId and values of items
