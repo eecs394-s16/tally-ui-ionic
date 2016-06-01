@@ -379,9 +379,18 @@ angular.module('starter.controllers', [])
 
   $scope.setPrice = function(item) {
 
+    console.log(item);
     var priceMatch = false;
     if (item.metadata.hasOwnProperty('product')){
-      priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+      if (item.metadata.product.hasOwnProperty('offer')) {
+        if (item.metadata.product.offer.hasOwnProperty('price')) {
+          priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        } else if (item.metadata.product.offer.hasOwnProperty('max_price')) {
+          priceMatch = item.metadata.product.offer.max_price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        } else if (item.metadata.product.offer.hasOwnProperty('min_price')) {
+          priceMatch = item.metadata.product.offer.min_price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        }
+      }
     } else {
       //TODO: parse the item description for price
       priceMatch = item.note.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
@@ -396,6 +405,9 @@ angular.module('starter.controllers', [])
     }
 
     angular.extend(item, {price: priceValue, toggle: false});
+    if (priceValue != false) {
+      item.toggle = true;
+    } 
     return item;
   };
 
