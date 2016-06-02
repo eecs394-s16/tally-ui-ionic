@@ -234,13 +234,17 @@ $scope.onHoldShortStart = function($event, $promise) {
       // Called if the button was held long enough
       console.log("NOAH Success! Hold was successful");
       $scope.isShortActionDone = !$scope.isShortActionDone;
-      $event.stopPropagation();
+      
+      var result = $event.stopPropagation();
+      console.log("NOAH stopped propagation");
 
       $scope.toggleDraggable();
 
     }, function(reason){
       // Called if the button is not held long enough
       console.log("NOAH button was not held down for long enough");
+      $event.stopPropagation();
+
     }, function(update){
 
       // Called multiple times before the promise is confirmed or rejected
@@ -250,10 +254,13 @@ $scope.onHoldShortStart = function($event, $promise) {
 
     console.log("NOAH dont handle push and hold");
     $event.stopPropagation();
-    return;
+    // return;
   }
 
-};
+    //$event.stopPropagation();
+    return;
+
+  };
 
     window.dragMoveListener = dragMoveListener;
 
