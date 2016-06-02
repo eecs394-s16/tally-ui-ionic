@@ -882,16 +882,26 @@ $scope.onHoldShortStart = function($event, $promise) {
     priority: 10,
     link: function postLink(scope, element, attrs) {
       
+
+      angular.element(document).bind('mousedown', function(){
+        console.log('clicked down on document');
+      });
+
+      angular.element(document).bind('mouseup', function(){
+        console.log('clicked up on document');
+      });
+
+
       var tickDelay = 10;
       scope.$watch('')
       scope.holdShortStyle = {
           'z-index':'300'
         };
-      if (scope.gridsterOpts.draggable.enabled){
-        angular.extend(scope.holdShortStyle, {'box-shadow':'5px 5px 5px green'});
-      }
+      // if (scope.gridsterOpts.draggable.enabled){
+      //   angular.extend(scope.holdShortStyle, {'box-shadow':'5px 5px 5px green'});
+      // }
       var deferred, stop;
-      element.on('mousedown', function($event) {
+      element.bind('mousedown', function($event) {
         var onHoldStart = $parse(attrs.holdButton);
         var holdDelay = attrs.holdButtonDelay ? ($parse(attrs.holdButtonDelay)(scope) || 400) : 400;
         var counter = 0;
@@ -927,7 +937,7 @@ $scope.onHoldShortStart = function($event, $promise) {
         }
 
       });
-      element.on('mouseup', function($event) {
+      element.bind('mouseup', function($event) {
 
         scope.holdShortStyle = {
           'opacity':'1.0',
