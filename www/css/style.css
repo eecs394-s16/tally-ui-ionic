@@ -32,7 +32,7 @@
 
 .drag-drop img{
 	width:100%;
-  z-index: 100;
+  z-index: 270;
   height:auto;
 
 }
@@ -231,4 +231,28 @@
   to {
     transform: rotate(359deg);
   }
+}
+
+/* CSS For Shaking Animation */
+@keyframes shake {
+  0% {transform: translateX(0);}
+  12.5% {transform: translateX(-6px) rotateY(-5deg)}
+  37.5% {transform: translateX(5px) rotateY(4deg)}
+  62.5% {transform: translateX(-3px) rotateY(-2deg)}
+  87.5% {transform: translateX(2px) rotateY(1deg)}
+  100% {transform: translateX(0)}
+}
+
+@-webkit-keyframes shake {
+  0% {-webkit-transform: translateX(0);}
+  12.5% {-webkit-transform: translateX(-6px) rotateY(-5deg)}
+  37.5% {-webkit-transform: translateX(5px) rotateY(4deg)}
+  62.5% {-webkit-transform: translateX(-3px) rotateY(-2deg)}
+  87.5% {-webkit-transform: translateX(2px) rotateY(1deg)}
+  100% {-webkit-transform: translateX(0)}
+}
+
+.shake {
+  -webkit-animation: shake 400ms ease-in-out;
+  animation: shake 400ms ease-in-out;
 }

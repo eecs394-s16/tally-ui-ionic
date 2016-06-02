@@ -8,17 +8,16 @@
       <button class="button" ng-click="showCollectionEdit()">
         Edit
       </button>
-<!--       <input type="button" ng-click="gridsterOpts.draggable.enabled = !gridsterOpts.draggable.enabled" value="{{gridsterOpts.draggable.enabled ? 'Disable' : 'Enable' }} Draggability" /> -->
- <!--    <button class="button" ng-click="toggleDraggable()">
-      Toggle Draggability
-    </button> -->
     </ion-nav-buttons>
 
-      <ion-header-bar ng-show="showHeaderBar" class="bar-subheader bar-positive">
+      <ion-header-bar ng-show="showHeaderBar && !gridsterOpts.draggable.enabled" class="bar-subheader bar-positive">
         <h1 class="title">${{ totalPrice }}</h1>
-        <button ng-click="toggleDraggable()" ng-show="!gridsterOpts.draggable.enabled">
-          Reorder
+          <button ng-click="toggleDraggable()" ng-show="gridsterOpts.draggable.enabled">
+          Done
           </button>
+      </ion-header-bar>
+      <ion-header-bar ng-show="showHeaderBar && gridsterOpts.draggable.enabled" class="bar-subheader bar-balanced">
+        <h1 class="title">${{ totalPrice }}</h1>
           <button ng-click="toggleDraggable()" ng-show="gridsterOpts.draggable.enabled">
           Done
           </button>
@@ -27,12 +26,10 @@
       <ion-content id = "collection-items" scroll = "true" data-tap-disabled = "false" class="has-header has-subheader">
       <div gridster = "gridsterOpts">
         <ul>
-<!--         <li gridster-item id = "item-cards" size-x="item.size_x" size-y="5" ng-repeat="item in items"
-                  class="draggable drag-drop"> -->
         <div ng-repeat="item in items">
-          <!-- class="item-thumbnail-top" -->
-          <div ng-class="!gridsterOpts.draggable.enabled && {'danger': !isShortActionDone, 'success': isShortActionDone} || off-hold" hold-button="!gridsterOpts.draggable.enabled && onHoldShortStart($event, $promise) || false" hold-button-delay="1000">
-        <li gridster-item id = "item-cards" size-x="item.size.x" size-y="item.size.y" class="draggable drag-drop">  
+          
+        <li gridster-item id = "item-cards" size-x="item.size.x" size-y="item.size.y" class="draggable drag-drop"> 
+        <div ng-class="!gridsterOpts.draggable.enabled && {'danger': !isShortActionDone, 'success': isShortActionDone} || off-hold" hold-button="!gridsterOpts.draggable.enabled && onHoldShortStart($event, $promise) || false" hold-button-delay="2000" ng-style="holdShortStyle">
           <a href="#/app/collection/{{collectionId}}/{{item.id}}">
             <img ng-src="{{ item.image.original.url }}">
           </a>
@@ -40,8 +37,9 @@
             <h5 class = "price">{{ formatPrice(item) }}</h5>
             <ion-toggle class="price-slider" toggle-class="toggle-calm" ng-model="item.toggle" ng-checked="item.toggle" ng-click="calculateSum()" ng-show="hasPrice(item)">Tally</ion-toggle>
           </div>
-          </div>
+        </div>  
        </li>  
+       
       
       </div>
       </ul>

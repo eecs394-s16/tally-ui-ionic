@@ -85,7 +85,6 @@ angular.module('starter.controllers', [])
       }
 
       curr_left = !curr_left;
-      console.log("NOAH DOC scope.items[key].size.y, scope.items[key]");
       console.log($scope.items[key].size.y);
       console.log($scope.items[key]);
       console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos);
@@ -164,7 +163,6 @@ angular.module('starter.controllers', [])
     };
 
     function dragMoveListener (event) {
-      console.log("NOAH WE ARE HERE");
       if ($scope.holding) {
         $ionicScrollDelegate.freezeScroll(true);
         var target = event.target,
@@ -217,14 +215,17 @@ angular.module('starter.controllers', [])
     }
 };
 
-// NOAH
 $scope.toggleDraggable = function() {
   $scope.gridsterOpts.draggable.enabled = !$scope.gridsterOpts.draggable.enabled;
   return;
 };
 
+$scope.dragToggled = function(item){
+
+}
+
 ////////////////////////////
-//  NOAH: Push and Hold  //
+//  Push and Hold  //
 ////////////////////////////
 $scope.isShortActionDone = false;
 $scope.onHoldShortStart = function($event, $promise) {
@@ -232,32 +233,26 @@ $scope.onHoldShortStart = function($event, $promise) {
   if (!$scope.gridsterOpts.draggable.enabled) {
     $promise.then(function(success){
       // Called if the button was held long enough
-      console.log("NOAH Success! Hold was successful");
+      console.log("Push and Hold was successful");
       $scope.isShortActionDone = !$scope.isShortActionDone;
-      
-      var result = $event.stopPropagation();
-      console.log("NOAH stopped propagation");
 
       $scope.toggleDraggable();
+      var result = $event.stopPropagation();
 
     }, function(reason){
       // Called if the button is not held long enough
-      console.log("NOAH button was not held down for long enough");
-      $event.stopPropagation();
+      console.log("Tally item was not held down for long enough");
 
     }, function(update){
 
       // Called multiple times before the promise is confirmed or rejected
-      console.log("NOAH Keep holding. update.");
+      // console.log("Tally item being held down...");
+      
     })
   } else {
-
-    console.log("NOAH dont handle push and hold");
     $event.stopPropagation();
-    // return;
   }
 
-    //$event.stopPropagation();
     return;
 
   };
@@ -844,22 +839,36 @@ $scope.onHoldShortStart = function($event, $promise) {
  }
 })
 
-.directive('holdButton', function($parse, $q, $interval){
+.directive('holdButton', function($parse, $q, $interval, $window){
   return {
     restrict: 'A',
     priority: 10,
     link: function postLink(scope, element, attrs) {
       
       var tickDelay = 10;
-
+      scope.$watch('')
+      scope.holdShortStyle = {
+          'z-index':'300'
+        };
+      if (scope.gridsterOpts.draggable.enabled){
+        angular.extend(scope.holdShortStyle, {'box-shadow':'5px 5px 5px green'});
+      }
       var deferred, stop;
       element.on('mousedown', function($event) {
-
         var onHoldStart = $parse(attrs.holdButton);
         var holdDelay = attrs.holdButtonDelay ? ($parse(attrs.holdButtonDelay)(scope) || 400) : 400;
         var counter = 0;
         var nbTick = holdDelay / tickDelay;
         deferred = $q.defer();
+
+        scope.holdShortStyle = {
+          'opacity':'0.8'
+        };
+        if (scope.gridsterOpts.draggable.enabled){
+          angular.extend(scope.holdShortStyle, {'box-shadow':'5px 5px 5px grey'});
+        }
+
+
 
         // Call onTick fxn 'nbTick' times every 'tickDelay' ms
         // stop is stopper fxn
@@ -882,8 +891,14 @@ $scope.onHoldShortStart = function($event, $promise) {
 
       });
       element.on('mouseup', function($event) {
-        $event.stopPropagation();
+
+        scope.holdShortStyle = {
+          'opacity':'1.0',
+          'box-shadow':'0px 0px'
+        };
+
         $interval.cancel(stop);
+
 
         if (deferred) {
           deferred.reject($event);
@@ -893,8 +908,4 @@ $scope.onHoldShortStart = function($event, $promise) {
     }
   };
 
-})
-
-
-
-;
+});
