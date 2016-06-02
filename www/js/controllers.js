@@ -75,7 +75,7 @@ angular.module('starter.controllers', [])
       // $scope.items[key].size.y = y_ratio
       // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
       // angular.extend($scope.items[key], {size: {x: 40, y: 20}});
-      
+
       if (curr_left) {
         angular.extend($scope.items[key], {position: [0, curr_left_pos]});
         curr_left_pos +=y_ratio;
@@ -359,7 +359,7 @@ $scope.onHoldShortStart = function($event, $promise) {
 
 })
 
-.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, $state, UserService, CollectionService, ItemService) {
+.controller('CollectionsCtrl', function($scope, $http, $state, $ionicPopup, $ionicModal, $timeout, $state, UserService, CollectionService, ItemService, fooSvc) {
   $scope.collections = CollectionService.getCollections();
   $scope.importData = {};
   $scope.importResult = {};
@@ -370,10 +370,19 @@ $scope.onHoldShortStart = function($event, $promise) {
 
   $scope.setPrice = function(item) {
 
+    console.log(item);
     var priceMatch = false;
     var priceToggle = false;
     if (item.metadata.hasOwnProperty('product')){
-      priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+      if (item.metadata.product.hasOwnProperty('offer')) {
+        if (item.metadata.product.offer.hasOwnProperty('price')) {
+          priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        } else if (item.metadata.product.offer.hasOwnProperty('max_price')) {
+          priceMatch = item.metadata.product.offer.max_price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        } else if (item.metadata.product.offer.hasOwnProperty('min_price')) {
+          priceMatch = item.metadata.product.offer.min_price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+        }
+      }
     } else {
       //TODO: parse the item description for price
       priceMatch = item.note.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
@@ -388,7 +397,6 @@ $scope.onHoldShortStart = function($event, $promise) {
         priceValue = false;
     }
 
-    // angular.extend(item, {price: priceValue, toggle: false});
     angular.extend(item, {price: priceValue, toggle: priceToggle});
     return item;
   };
@@ -397,8 +405,8 @@ $scope.onHoldShortStart = function($event, $promise) {
     var height = item.image.original.height;
     var width = item.image.original.width;
 
- 
-    
+
+
     if (item.price != false) {
       height = Math.round(((height) * 6.0)/width) + 2;
     } else {
@@ -470,15 +478,27 @@ $scope.onHoldShortStart = function($event, $promise) {
     //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/pins/?access_token="+UserService.getToken()+"&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
         angular.extend($scope.importResult, response.data);
-        $scope.items = response.data.data;
-        for(i=0;i< $scope.items.length;i++){
-          currentItem = $scope.items[i];
-          currentItem = $scope.setPrice(currentItem);
-          currentItem = $scope.setSize(currentItem);
-          console.log("after setSize " + currentItem.size.y);
-          ItemService.addItem($scope.importResult.id, currentItem);
-        }
-        $scope.closeImport();
+        // $scope.items = response.data.data;
+        id = $scope.importResult.id;
+        console.log(id);
+        fooSvc.getPins(pinterestUsername, $scope.boards[idx]["name"]).then(function(data){
+          // console.log(data[1]);
+          $scope.items = data;
+
+          console.log("after recursive function");
+          console.log(response.data.data[1]);
+          for(i=0;i< $scope.items.length;i++){
+            currentItem = $scope.items[i];
+            currentItem = $scope.setPrice(currentItem);
+            currentItem = $scope.setSize(currentItem);
+            console.log(id);
+            ItemService.addItem(id, currentItem);
+          }
+          // console.log(ItemService.getItems(id));
+          // $scope.errorInfo = "";
+          $scope.closeImport();
+          // console.log($scope.items)
+        });
       }
     ).then($http.get("https://api.pinterest.com/v1/boards/"+pinterestUsername+"/"+$scope.boards[idx]["name"]+"/?access_token="+UserService.getToken()+"&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
       angular.extend($scope.importResult, response.data.data);
@@ -515,22 +535,39 @@ $scope.onHoldShortStart = function($event, $promise) {
 
     //TODO: Implement http get to get all subsequent items, only gets 25
     $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        console.log($scope.importData)
+        // console.log($scope.importData)
+        console.log("response: ");
+        console.log(response);
         angular.extend($scope.importResult, response.data);
-        $scope.items = response.data.data;
-        for(i=0;i< $scope.items.length;i++){
-          currentItem = $scope.items[i];
-          currentItem = $scope.setPrice(currentItem);
-          currentItem = $scope.setSize(currentItem);
-          ItemService.addItem($scope.importResult.id, currentItem);
-        }
-        $scope.errorInfo = "";
-        $scope.closeImport2();
+        id = $scope.importResult.id;
+        console.log(id);
+        fooSvc.getPins($scope.importData.username, $scope.importData.boardname).then(function(data){
+          // console.log(data[1]);
+          $scope.items = data;
+
+          console.log("after recursive function");
+          console.log(response.data.data[1]);
+          for(i=0;i< $scope.items.length;i++){
+            currentItem = $scope.items[i];
+            currentItem = $scope.setPrice(currentItem);
+            currentItem = $scope.setSize(currentItem);
+            console.log(id);
+            ItemService.addItem(id, currentItem);
+          }
+          console.log(ItemService.getItems(id));
+          $scope.errorInfo = "";
+          $scope.closeImport2();
+          // console.log($scope.items)
+        });
       }
     ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
       angular.extend($scope.importResult, response.data.data);
+      // if (response.page.next){
+      //   console.log("**************");
+      // }
     })
     ).then(function() {
+      console.log("test");
       console.log($scope.importResult);
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
@@ -907,5 +944,23 @@ $scope.onHoldShortStart = function($event, $promise) {
 
     }
   };
+})
+.factory('fooSvc', function($q, $http){
+  function getPinsFrom(url, pins){
+    return $http.get(url).then(function(response){
+      console.log(response);
+      pins = pins.concat(response.data.data);
+      if(response.data.page.next){
+        return getPinsFrom(response.data.page.next, pins);
+      } else {
+        return pins;
+      }
+    });
+  }
 
+  return {
+    getPins : function(username, boardname){
+      return getPinsFrom("https://api.pinterest.com/v1/boards/"+username+"/"+boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link", []);
+    }
+  };
 });

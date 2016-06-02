@@ -8,7 +8,7 @@ angular.module('starter.controllers', [])
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
+  //$scope.$on('$ionicModalnicView.enter', function(e) {
   //});
   // Form data for the login modal
   $scope.loginData = {};
@@ -52,7 +52,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, ItemService, CollectionService) {
+.controller('CollectionCtrl', function($scope, $ionicModal, $timeout, $http, $stateParams, $ionicScrollDelegate, ItemService, CollectionService) {
 
   $scope.shouldShowDelete = false;
   $scope.shouldShowReorder = false;
@@ -60,49 +60,63 @@ angular.module('starter.controllers', [])
   $scope.showHeaderBar = true;
   $scope.collectionId = $stateParams.collectionId;
   $scope.items = ItemService.getItems($stateParams.collectionId);
+
   console.log($scope.items);
+
+  curr_left_pos = 0;
+  curr_right_pos = 0;
+  curr_left = true;
+  for (var key in $scope.items) {
+    console.log($scope.items[key]);
+    var img = new Image();
+    img.src = $scope.items[key].image.original.url;
+    img.onload = function() {
+      console.log(this.width + " width|height " + this.height);
+      var y_ratio = Math.round((this.height*1.0)/10);
+      // $scope.items[key].size.y = y_ratio
+      // angular.extend($scope.items[key], {size_x: 1, size_y: y_ratio});
+      // angular.extend($scope.items[key], {size: {x: 40, y: 20}});
+      
+      if (curr_left) {
+        angular.extend($scope.items[key], {position: [0, curr_left_pos]});
+        curr_left_pos +=y_ratio;
+      } else {
+        angular.extend($scope.items[key], {position: [1, curr_right_pos]});
+        curr_right_pos += y_ratio;
+      }
+
+      curr_left = !curr_left;
+      console.log($scope.items[key].size.y);
+      console.log($scope.items[key]);
+      console.log(curr_left +" left?| " + curr_left_pos + " right " + curr_right_pos);
+    };
+
+      console.log("size.x: " + $scope.items[key].size.x + " | size.y: " + $scope.items[key].size.y);
+  }
+
+  $scope.customItemMap = {
+      sizeX: '1',
+      sizeY: 'item.size_y',
+      minSizeY: 'item.size_y',
+      maxSizeY: 'item.size_y'
+  };
+
 
   $scope.collection = CollectionService.getCollection($scope.collectionId);
 
-  $scope.importData = {}
-  $scope.reload = function() {
-    $scope.items = ItemService.getItems($stateParams.collectionId);
-    console.log($scope.items);
-  }
-  $ionicModal.fromTemplateUrl('templates/import.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.importModal = modal;
-  });
+  $scope.calculateSum = function() {
 
-  $scope.closeImport = function() {
-    $scope.importModal.hide();
-  };
-
-  // Open the import modal
-  $scope.import = function() {
-    $scope.importModal.show();
-  };
-
-  // Perform the import action when the user submits the import form
-  $scope.doImport = function() {
-    //TODO: Implement http get to get all subsequent items, only gets 25
-    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=Ac5HCX-jeHtTBqSZE87_3Hy7xmATFEs87BUzGXtDEIReRwBBUQAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
-        CollectionService.addCollection(response.data.data);
-        $scope.items = response.data.data;
-        for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($stateParams.collectionId, $scope.items[i]);
-        }
+    sum = 0;
+    for (var key in $scope.items) {
+      if ($scope.items[key].toggle){
+        sum += $scope.items[key].price;
       }
-    );
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeImport();
-      $scope.importData = {};
-      $scope.showHeaderBar = true;
-    }, 1000);
+    }
+
+    $scope.totalPrice = sum;
+    return sum;
   };
+  $scope.totalPrice = $scope.calculateSum();
 
   $ionicModal.fromTemplateUrl('templates/edit-collection.html', {
     scope: $scope
@@ -124,6 +138,10 @@ angular.module('starter.controllers', [])
     $scope.editCollectionModal.hide();
     $scope.updatedCollection = {};
   };
+
+  $scope.holding = false;
+
+
 
   // console.log($scope.importData)
 
@@ -151,7 +169,7 @@ angular.module('starter.controllers', [])
   interact('.draggable')
     .draggable({
       // enable inertial throwing
-      inertia: true,
+      inertia: false,
       // keep the element within the area of it's parent
       restrict: {
         restriction: "parent",
@@ -160,34 +178,49 @@ angular.module('starter.controllers', [])
       },
       // enable autoScroll
       autoScroll: true,
-
       // call this function on every dragmove event
+
       onmove: dragMoveListener,
       // call this function on every dragend event
       onend: function (event) {
-        var textEl = event.target.querySelector('p');
+        if ($scope.holding) {
+          $scope.holding = false;
+        } else {
+          var textEl = event.target.querySelector('p');
+          $ionicScrollDelegate.freezeScroll(false);
 
-        textEl && (textEl.textContent =
-          'moved a distance of '
-          + (Math.sqrt(event.dx * event.dx +
-                       event.dy * event.dy)|0) + 'px');
+          textEl && (textEl.textContent =
+            'moved a distance of '
+            + (Math.sqrt(event.dx * event.dx +
+                         event.dy * event.dy)|0) + 'px');
+        }
       }
+    })
+    .on('hold', function (event) {
+      $scope.holding = true;
+
+      // TODO: holding css change animation
     });
 
+
+
     function dragMoveListener (event) {
-      var target = event.target,
-          // keep the dragged position in the data-x/data-y attributes
-          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+      if ($scope.holding) {
+        $ionicScrollDelegate.freezeScroll(true);
+        var target = event.target,
+            // keep the dragged position in the data-x/data-y attributes
+            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-      // translate the element
-      target.style.webkitTransform =
-      target.style.transform =
-        'translate(' + x + 'px, ' + y + 'px)';
+        // translate the element
+        target.style.webkitTransform =
+        target.style.transform =
+          'translate(' + x + 'px, ' + y + 'px)';
 
-      // update the posiion attributes
-      target.setAttribute('data-x', x);
-      target.setAttribute('data-y', y);
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+      }
     }
 
     // this is used later in the resizing and gesture demos
@@ -200,34 +233,38 @@ angular.module('starter.controllers', [])
 
       // listen for drop related events:
 
-      ondropactivate: function (event) {
-        // add active dropzone feedback
-        event.target.classList.add('drop-active');
-      },
-      ondragenter: function (event) {
-        var draggableElement = event.relatedTarget,
-            dropzoneElement = event.target;
-
-        // feedback the possibility of a drop
-        dropzoneElement.classList.add('drop-target');
-        draggableElement.classList.add('can-drop');
-        draggableElement.textContent = 'Dragged in';
-      },
-      ondragleave: function (event) {
-        // remove the drop feedback style
-        event.target.classList.remove('drop-target');
-        event.relatedTarget.classList.remove('can-drop');
-        event.relatedTarget.textContent = 'Dragged out';
-      },
-      ondrop: function (event) {
-        event.relatedTarget.textContent = 'Dropped';
-      },
-      ondropdeactivate: function (event) {
-        // remove active dropzone feedback
-        event.target.classList.remove('drop-active');
-        event.target.classList.remove('drop-target');
-      }
     });
+
+    $scope.gridsterOpts = {
+    columns:2,// the width of the grid, in columns
+    pushing: true, // whether to push other items out of the way on move or resize
+    floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
+    swapping: false, // whether or not to have items of the same size switch places instead of pushing down if they are the same size
+    width: 'auto', // can be an integer or 'auto'. 'auto' scales gridster to be the full width of its containing element
+    colWidth: 'auto', // can be an integer or 'auto'.  'auto' uses the pixel width of the element divided by 'columns'
+    rowHeight: '31', // can be an integer or 'match'.  Match uses the colWidth, giving you square widgets.
+    margins: [10, 10], // the pixel distance between each widget
+    outerMargin: true, // whether margins apply to outer edges of the grid
+    isMobile: false, // stacks the grid items if true
+    mobileBreakPoint: 100, // if the screen is not wider that this, remove the grid layout and stack the items
+    mobileModeEnabled: false, // whether or not to toggle mobile mode when screen width is less than mobileBreakPoint
+    minColumns: 1, // the minimum columns the grid must have
+    minRows: 1, // the minimum height of the grid, in rows
+    maxRows: 100000,
+    defaultSizeX: 1, // the default width of a gridster item, if not specifed
+    defaultSizeY: 1, // the default height of a gridster item, if not specified
+    minSizeX: 1, // minimum column width of an item
+    maxSizeX: null, // maximum column width of an item
+    minSizeY: 1, // minumum row height of an item
+    maxSizeY: null, // maximum row height of an item
+    resizable: {
+       enabled: false,
+       handles: ['n', 'e', 's', 'w', 'ne', 'se', 'sw', 'nw'],
+       start: function(event, $element, widget) {}, // optional callback fired when resize is started,
+       resize: function(event, $element, widget) {}, // optional callback fired when item is resized,
+       stop: function(event, $element, widget) {} // optional callback fired when item is finished resizing
+    }
+};
 
     window.dragMoveListener = dragMoveListener;
 
@@ -272,7 +309,7 @@ angular.module('starter.controllers', [])
         "access_token" :  res.session.accessToken
       };
       $http.post("http://45.55.146.198:3002/users", new_user).success(function(resp){
-        ionicPopup.alert("Creating a new User Successes!");
+        alert("Success Creating a new User");
         UserService.setToken(resp.user.pinterest);
         UserService.setCookie(resp.session.session_key);
         // console.log(UserService.cookieSet());
@@ -325,7 +362,7 @@ angular.module('starter.controllers', [])
 
     })
     .error(function(err){
-      $ionicPopup.alert("username and password don't match!");
+      alert("login error");
     });
   }
 
@@ -339,6 +376,71 @@ angular.module('starter.controllers', [])
   // Initialize the Pinterest SDK
   PDK.init({appId:'4833595787237665566', cookie: true});
   var pinterestUsername;
+
+  $scope.setPrice = function(item) {
+
+    var priceMatch = false;
+    if (item.metadata.hasOwnProperty('product')){
+      priceMatch = item.metadata.product.offer.price.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+    } else {
+      //TODO: parse the item description for price
+      priceMatch = item.note.match(/[\$\£\€\¥](\d+(?:\.\d{1,2})?)/);
+    }
+
+    if (priceMatch) {
+      detectedCurrency = priceMatch[0].substring(0, 1);
+      priceValue = Number(priceMatch[1]);
+    } else {
+        detectedCurrency = false;
+        priceValue = false;
+    }
+
+    angular.extend(item, {price: priceValue, toggle: false});
+    return item;
+  };
+
+  $scope.setSize = function(item) {
+    var height = item.image.original.height;
+    var width = item.image.original.width;
+
+ 
+    
+    if (item.price != false) {
+      height = Math.round(((height) * 6.0)/width) + 2;
+    } else {
+      height = Math.ceil(((height) * 6.0)/width);
+    }
+    console.log("height: " + height);
+
+    angular.extend(item, {size: {x: 1, y: height}});
+    console.log("set height in set size: " + item.size.y);
+    return item;
+  };
+
+  $scope.hasPrice = function(item) {
+
+    if (item.price) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  $scope.formatPrice = function(item) {
+
+    var priceStr;
+
+    // TODO: get this value from the actual detected currency
+    var detectedCurrency = "$";
+
+    if (!item.price) {
+      priceStr = " ";
+    } else {
+      priceStr = detectedCurrency + " " + Math.round(item.price);
+    }
+
+    return priceStr;
+  };
 
   $ionicModal.fromTemplateUrl('templates/board-list.html', {
     scope: $scope
@@ -367,6 +469,7 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doImport = function(idx) {
     //console.log('Doing Import', $scope.importData);
+    $scope.loading=true;
     console.log(idx);
     console.log($scope.boards[idx]);
 
@@ -375,7 +478,11 @@ angular.module('starter.controllers', [])
         angular.extend($scope.importResult, response.data);
         $scope.items = response.data.data;
         for(i=0;i< $scope.items.length;i++){
-          ItemService.addItem($scope.importResult.id, $scope.items[i]);
+          currentItem = $scope.items[i];
+          currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
+          console.log("after setSize " + currentItem.size.y);
+          ItemService.addItem($scope.importResult.id, currentItem);
         }
         $scope.closeImport();
       }
@@ -387,6 +494,61 @@ angular.module('starter.controllers', [])
       CollectionService.addCollection($scope.importResult);
       $scope.collections = CollectionService.getCollections();
       $scope.importResult = {};
+    }).finally(function(){
+      $scope.loading = false;
+    });
+  };
+
+  //Import a board using username and boardname
+  $ionicModal.fromTemplateUrl('templates/import.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.import2Modal = modal;
+  });
+
+  $scope.closeImport2 = function() {
+    $scope.import2Modal.hide();
+  };
+
+  $scope.import2 = function() {
+    $scope.import2Modal.show();
+  };
+
+  // Perform the login action when the user submits the login form
+  $scope.doImport2 = function() {
+    console.log('Doing Import', $scope.importData);
+    $scope.loading = true;
+
+    //TODO: Implement http get to get all subsequent items, only gets 25
+    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").then(function(response){
+        console.log($scope.importData)
+        angular.extend($scope.importResult, response.data);
+        $scope.items = response.data.data;
+        for(i=0;i< $scope.items.length;i++){
+          currentItem = $scope.items[i];
+          currentItem = $scope.setPrice(currentItem);
+          currentItem = $scope.setSize(currentItem);
+          ItemService.addItem($scope.importResult.id, currentItem);
+        }
+        $scope.errorInfo = "";
+        $scope.closeImport2();
+      }
+    ).then($http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Curl%2Cname%2Ccreator%2Cimage").then(function(response){
+      angular.extend($scope.importResult, response.data.data);
+    })
+    ).then(function() {
+      console.log($scope.importResult);
+      CollectionService.addCollection($scope.importResult);
+      $scope.collections = CollectionService.getCollections();
+      $scope.importResult = {};
+    }).finally(function(){
+      $scope.loading = false;
+    });
+    $http.get("https://api.pinterest.com/v1/boards/"+$scope.importData.username+"/"+$scope.importData.boardname+"/pins/?access_token=AWiy0JuQcyVwU19tSF9GtYreXHk5FE9B4q-TuMZDFRg1dYBCcAAAAAA&fields=id%2Clink%2Cnote%2Curl%2Cboard%2Cimage%2Ccreated_at%2Ccreator%2Cattribution%2Cmetadata%2Cmedia%2Ccounts%2Ccolor%2Coriginal_link").error(function(response){
+      $scope.loading = false;
+      $scope.errorInfo = "Username or BoardName Not Correct";
+      console.log("afd");
+    //  alert("Username ");
     });
   };
 
