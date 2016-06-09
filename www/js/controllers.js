@@ -390,7 +390,7 @@ $scope.onHoldShortStart = function($event, $promise) {
 
     if (priceMatch) {
       detectedCurrency = priceMatch[0].substring(0, 1);
-      priceValue = Number(priceMatch[1]);
+      priceValue = Math.round(Number(priceMatch[1]) * 100) / 100;
       priceToggle = true;
     } else {
         detectedCurrency = false;
