@@ -15,3 +15,10 @@
 or
 
   `ionic run ios`
+
+##Limitations
+- Masonry drag and drop functionality (not free form)
+- No currency conversions (parses price and shows with $ sign but doesn't actually convert)
+
+##Bugs
+- 
